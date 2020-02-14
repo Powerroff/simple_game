@@ -9,25 +9,28 @@ public class UIManager : MonoBehaviour
     public Button nextRoomButton, leftOption, rightOption;
     public Image background;
     public Player player;
+    public Text hpText;
+    public Text stamText;
+    public Text strText;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
-        nextRoomButton.onClick.AddListener(() => { player.stats.stamina -= 1; });
-        
-        nextRoomButton.onClick.AddListener(() => { print(
-        "HP: " + player.stats.hp +
-        "Stamina: " + player.stats.stamina +
-        "Str: " + player.stats.strength); });
-        // */
+        UpdateStatText();
+
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    void UpdateStatText() {
+        hpText.text = "HP: " + player.stats.hp;
+        stamText.text = "Stamina: " + player.stats.stamina;
+        strText.text = "Strength: " + player.stats.strength;
     }
 
     public void nextRoom() {
@@ -37,7 +40,10 @@ public class UIManager : MonoBehaviour
         gm.nextRoom();
         setOptionsEnabled(true);
 
-        
+
+        player.stats.stamina -= 1;
+
+        UpdateStatText();
     }
 
     public void updateBackground(Room room) {
