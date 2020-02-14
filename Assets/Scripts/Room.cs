@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Room
+public class Room : MonoBehaviour
 {
-    
-
-    public Room() {
-
+    // Start is called before the first frame update
+    void Start()
+    {
+        
     }
 
-    public void init(Room northExit, Room eastExit, Room southExit, Room westExit) {
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public Room () {
 
     }
 }
