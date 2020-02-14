@@ -14,9 +14,14 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        leftOption.onClick.AddListener(() => { player.stats.strength += 2; });
+        
         nextRoomButton.onClick.AddListener(() => { player.stats.stamina -= 1; });
-        nextRoomButton.onClick.AddListener(() => { print(player.stats.strength); });
+        
+        nextRoomButton.onClick.AddListener(() => { print(
+        "HP: " + player.stats.hp +
+        "Stamina: " + player.stats.stamina +
+        "Str: " + player.stats.strength); });
+        // */
     }
 
     // Update is called once per frame
@@ -32,7 +37,7 @@ public class UIManager : MonoBehaviour
         gm.nextRoom();
         setOptionsEnabled(true);
 
-
+        
     }
 
     public void updateBackground(Room room) {
