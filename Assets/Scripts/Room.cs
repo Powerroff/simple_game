@@ -8,6 +8,7 @@ public class Room : MonoBehaviour
 {
     public Color backgroundColor;
     public Option[] possibleEvents;
+    public Obstacle obstacle;
     
     // Start is called before the first frame update
     void Start()
@@ -15,9 +16,12 @@ public class Room : MonoBehaviour
         
     }
 
-    public void init(Option[] pes) {
-        backgroundColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+    public void init(Option[] pes, Obstacle[] pos) {
+        backgroundColor = Random.ColorHSV(0f, .5f, .5f, .5f, 0.5f, 1f);  // I've limited the background colors to the lighter half of the spectrum.
         possibleEvents = pes;
+        obstacle = pos[Random.Range(0, pos.Length)];
+
+
     }
 
 

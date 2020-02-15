@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        room = gameObject.AddComponent<Room>() as Room;
+        nextRoom();
     }
 
     // Update is called once per frame
@@ -20,20 +20,25 @@ public class GameManager : MonoBehaviour
     }
 
     public void nextRoom() {
+        if (room)
+            if (room.obstacle.health > 0) {
+                room.obstacle.unCleared.Invoke();
+            } else {
+                room.obstacle.cleared.Invoke();
+            }
+
         Room tempRoom = gameObject.AddComponent<Room>() as Room;
-        Destroy(room);
+        if(room) Destroy(room);
         room = tempRoom;
 
 
-        Option tempA = new Option("Strength UP", () => { player.stats.strength++; });
-        Option tempB = new Option("Recover Stamina", () => { player.stats.stamina++; });
-        Option tempC = new Option("Increase HP", () => { player.stats.hp += 2; });
-        Option tempD = new Option("Do nothing", () => {; });
-        room.init(new Option[]{ tempA, tempB, tempC, tempD});
+        
+        room.init(Option.tempPackage(player), Obstacle.tempPackage(player));
 
         
         room.newButtons(uim.leftOption, uim.rightOption);
         uim.updateBackground(room);
+        uim.UpdateRoomText(room);
 
     }
 

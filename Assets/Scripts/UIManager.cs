@@ -12,6 +12,8 @@ public class UIManager : MonoBehaviour
     public Text hpText;
     public Text stamText;
     public Text strText;
+    public Text obsName;
+    public Text obsDescription;
 
 
     // Start is called before the first frame update
@@ -31,6 +33,11 @@ public class UIManager : MonoBehaviour
         hpText.text = "HP: " + player.stats.hp;
         stamText.text = "Stamina: " + player.stats.stamina;
         strText.text = "Strength: " + player.stats.strength;
+    }
+
+    public void UpdateRoomText(Room room) {
+        obsName.text = room.obstacle.name;
+        obsDescription.text = room.obstacle.description;
     }
 
     public void nextRoom() {
