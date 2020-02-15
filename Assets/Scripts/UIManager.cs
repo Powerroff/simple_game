@@ -35,10 +35,6 @@ public class UIManager : MonoBehaviour
         strText.text = "Strength: " + player.stats.strength;
     }
 
-    public void UpdateRoomText(Room room) {
-        obsName.text = room.obstacle.name;
-        obsDescription.text = room.obstacle.description;
-    }
 
     public void nextRoom() {
         leftOption.GetComponent<OptionManager>().resetListeners();
@@ -53,17 +49,28 @@ public class UIManager : MonoBehaviour
         UpdateStatText();
     }
 
-    public void updateBackground(Room room) {
+    public void updateWithRoomInformation(Room room) {
         background.color = room.backgroundColor;
-        print(room.backgroundColor);
-    }
 
+
+        //Set up obstacle
+        obsName.text = room.obstacle.name;
+        obsDescription.text = room.obstacle.description;
+
+
+
+        //Set up option buttons
+        leftOption.onClick.AddListener(room.options[0].onpress);
+        leftOption.GetComponentInChildren<Text>().text = room.options[0].description;
+
+        rightOption.onClick.AddListener(room.options[1].onpress);
+        rightOption.GetComponentInChildren<Text>().text = room.options[1].description;
+    }
 
 
     public void setOptionsEnabled(bool enabled) {
         leftOption.interactable = enabled;
         rightOption.interactable = enabled;
-        print("asdf");
     }
 
     

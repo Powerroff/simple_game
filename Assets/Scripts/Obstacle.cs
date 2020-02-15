@@ -5,6 +5,8 @@ using UnityEngine.Events;
 
 public class Obstacle
 {
+    public static Player player;
+
     public enum ObstacleClass
     {
         Nature = 0,
@@ -23,12 +25,22 @@ public class Obstacle
 
     }
 
+    public UnityAction changeHp(int amount) {
+        return (() => { health += amount; });
+    }
+
+
+
+
+
+
+
 
     // Prebuilt Options
 
 
 
-    public static Obstacle tempA(Player player) {
+    public static Obstacle tempA() {
         Obstacle o = new Obstacle();
         o.name = "Underbrush";
         o.description = "Natural. \n Health 1 \n If not cleared, -1 stamina.";
@@ -39,7 +51,7 @@ public class Obstacle
         return o;
     }
 
-    public static Obstacle tempB(Player player) {
+    public static Obstacle tempB() {
         Obstacle o = new Obstacle();
         o.name = "Overgrown Tree";
         o.description = "Natural.  \n Health 2 \n If cleared, +1 stamina.";
@@ -50,7 +62,7 @@ public class Obstacle
         return o;
     }
 
-    public static Obstacle tempC(Player player) {
+    public static Obstacle tempC() {
         Obstacle o = new Obstacle();
         o.name = "Feral Hound";
         o.description = "Monster.  \n Health 1 \n If not killed, -1 health.";
@@ -61,7 +73,7 @@ public class Obstacle
         return o;
     }
 
-    public static Obstacle tempD(Player player) {
+    public static Obstacle tempD() {
         Obstacle o = new Obstacle();
         o.name = "Monkey";
         o.description = "Monster.  \n Health 2 \n If cleared, +1 health.";
@@ -72,8 +84,8 @@ public class Obstacle
         return o;
     }
 
-    public static Obstacle[] tempPackage(Player player) {
-        return new Obstacle[] { tempA(player), tempB(player), tempC(player), tempD(player) };
+    public static Obstacle[] tempPackage() {
+        return new Obstacle[] { tempA(), tempB(), tempC(), tempD() };
     }
 
 

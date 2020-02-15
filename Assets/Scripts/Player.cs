@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : MonoBehaviour
 {
@@ -22,4 +23,17 @@ public class Player : MonoBehaviour
         stats = new StatsManager(10,10,0);
         equipment = new EquipmentManager();
     }
+
+    public UnityAction changeStr(int amount) {
+        return (() => { stats.strength += amount; });
+    }
+
+    public UnityAction changeStam(int amount) {
+        return (() => { stats.stamina += amount; });
+    }
+
+    public UnityAction changeHp(int amount) {
+        return (() => { stats.hp += amount; });
+    }
+
 }
