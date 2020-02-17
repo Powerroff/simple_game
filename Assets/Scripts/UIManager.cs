@@ -5,10 +5,13 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public GameManager gm;
+    //Maybe will eventually include a static instance for this; right now there's no need
+
+    GameManager gm; //Including this here for convenience only.
+
+    //UI Elements
     public Button nextRoomButton, leftOption, rightOption;
     public Image background;
-    public Player player;
     public Text hpText;
     public Text stamText;
     public Text strText;
@@ -16,9 +19,15 @@ public class UIManager : MonoBehaviour
     public Text obsDescription;
 
 
+
     // Start is called before the first frame update
-    void Start()
+    void Start() {
+
+    }
+
+    public void init()
     {
+        gm = GameManager.instance;
         UpdateStatText();
 
     }
@@ -26,45 +35,53 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
+        if (Input.GetKeyDown(KeyCode.Space)) nextRoom();
+        if (Input.GetKeyDown(KeyCode.Alpha1)) selectLeftOption();
+        if (Input.GetKeyDown(KeyCode.Alpha2)) selectRightOption();
     }
 
     void UpdateStatText() {
-        hpText.text = "HP: " + player.stats.hp;
-        stamText.text = "Stamina: " + player.stats.stamina;
-        strText.text = "Strength: " + player.stats.strength;
+        hpText.text = "HP: " + gm.player.stats.hp;
+        stamText.text = "Stamina: " + gm.player.stats.stamina;
+        strText.text = "Strength: " + gm.player.stats.strength;
     }
 
 
     public void nextRoom() {
-        leftOption.GetComponent<OptionManager>().resetListeners();
-        rightOption.GetComponent<OptionManager>().resetListeners();
-
+        
+        //GM loads the next room
         gm.nextRoom();
+
+        //Update with new information
+        updateWithRoomInformation();
         setOptionsEnabled(true);
-
-
-        player.stats.stamina -= 1;
-
         UpdateStatText();
     }
 
-    public void updateWithRoomInformation(Room room) {
-        background.color = room.backgroundColor;
+    public void updateWithRoomInformation() {
+        background.color = gm.room.backgroundColor;
 
 
         //Set up obstacle
-        obsName.text = room.obstacle.name;
-        obsDescription.text = room.obstacle.description;
+        obsName.text = gm.room.obstacle.name;
+        obsDescription.text = gm.room.obstacle.description;
 
 
+        //Set up option buttons text
+        leftOption.GetComponentInChildren<Text>().text = gm.room.options[0].description;
+        rightOption.GetComponentInChildren<Text>().text = gm.room.options[1].description;
+    }
 
-        //Set up option buttons
-        leftOption.onClick.AddListener(room.options[0].onpress);
-        leftOption.GetComponentInChildren<Text>().text = room.options[0].description;
-
-        rightOption.onClick.AddListener(room.options[1].onpress);
-        rightOption.GetComponentInChildren<Text>().text = room.options[1].description;
+    public void selectLeftOption() {
+        leftOption.interactable = false;
+        rightOption.interactable = true;
+        gm.optionSelected = gm.room.options[0];
+    }
+    public void selectRightOption() {
+        leftOption.interactable = true;
+        rightOption.interactable = false;
+        gm.optionSelected = gm.room.options[1];
     }
 
 

@@ -5,20 +5,19 @@ using UnityEngine.Events;
 
 public class Option
 {
+    //These (global) variables are looked up from GameManager.instance upon creation
+    Player player;
+    Obstacle obstacle;
+
+    //Other variables
     public string description;
-    public UnityAction onpress;
+    public UnityAction onpress;  //Capitalization?
 
-    public static Player player;
-    public static Obstacle obstacle;
-
-
-    public Option(string s, UnityAction op) {
-        description = s;
-        onpress = op;
-    }
 
     public Option() {
         onpress = (() => {; });
+        player = GameManager.instance.player;
+        obstacle = GameManager.instance.room.obstacle;
     }
 
 
@@ -32,9 +31,8 @@ public class Option
     public static Option tempA() {
         Option o = new Option();
         o.description = "Train\n\nChance to gain strength.";
-
-        if (Random.Range(0, 1) < .5) {
-            o.onpress += player.changeStr(1);
+        if (Random.Range(0f, 1f) < .75) {
+            o.onpress += o.player.changeStr(1);
             o.onpress += (() => Debug.Log("Success!"));
         }
 
@@ -45,43 +43,42 @@ public class Option
         Option o = new Option();
         o.description = "Recover\n\nChance to gain heal and regain stamina.";
 
-        if (Random.Range(0, 1) < .75)
-            o.onpress += player.changeHp(2);
-        if (Random.Range(0, 1) < .75)
-            o.onpress += player.changeStam(2);
+        if (Random.Range(0f, 1f) < .75)
+            o.onpress += o.player.changeHp(2);
+        if (Random.Range(0f, 1f) < .75)
+            o.onpress += o.player.changeStam(2);
 
         return o;
     }
 
     public static Option tempC() {
         Option o = new Option();
-        o.description = "Wing it\n\n0-2 Damage to all types";
-
-        int dmg = Random.Range(0, 3);
-        o.onpress += obstacle.changeHp(-dmg);
+        o.description = string.Format("Wing it\n\n{0}-{1} Damage to all types",o.player.stats.strength, o.player.stats.strength + 2);
+        int dmg = Random.Range(o.player.stats.strength, o.player.stats.strength + 3);
+        o.onpress += o.obstacle.changeHp(-dmg);
         o.onpress += (() => Debug.Log("Damage " + dmg));
         return o;
     }
 
     public static Option tempD() {
         Option o = new Option();
-        o.description = "Harvest\n\n2 Damage to nature.\n -1 Stamina";
+        o.description = string.Format("Harvest\n\n{0} Damage to nature.\n -1 Stamina", 2 + o.player.stats.strength);
 
-        if (obstacle.obstacleClass == Obstacle.ObstacleClass.Nature) {            //Maybe could be reworked a bit
-            o.onpress += obstacle.changeHp(-2);
+        if (o.obstacle.obstacleClass == Obstacle.ObstacleClass.Nature) {            //Maybe could be reworked a bit
+            o.onpress += o.obstacle.changeHp(-2-o.player.stats.strength);
         }
-        o.onpress += player.changeStam(-1);
+        o.onpress += o.player.changeStam(-1);
         return o;
     }
 
     public static Option tempE() {
         Option o = new Option();
-        o.description = "Hack and Slash\n\n2 Damage to monsters.\n -1 Stamina";
+        o.description = string.Format("Hack and Slash\n\n{0} Damage to monsters.\n -1 Stamina", 2+o.player.stats.strength);
 
-        if (obstacle.obstacleClass == Obstacle.ObstacleClass.Monster) {            //Maybe could be reworked a bit
-            o.onpress += obstacle.changeHp(-2);
+        if (o.obstacle.obstacleClass == Obstacle.ObstacleClass.Monster) {            //Maybe could be reworked a bit
+            o.onpress += o.obstacle.changeHp(-2-o.player.stats.strength);
         }
-        o.onpress += player.changeStam(-1);
+        o.onpress += o.player.changeStam(-1);
         return o;
     }
 
