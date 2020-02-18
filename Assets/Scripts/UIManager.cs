@@ -12,11 +12,7 @@ public class UIManager : MonoBehaviour
     //UI Elements
     public Button nextRoomButton, leftOption, rightOption;
     public Image background;
-    public Text hpText;
-    public Text stamText;
-    public Text strText;
-    public Text obsName;
-    public Text obsDescription;
+    public Text hpText, stamText, strText, obsName, obsDescription, relicName, relicDescription;
 
 
 
@@ -71,15 +67,27 @@ public class UIManager : MonoBehaviour
         //Set up option buttons text
         leftOption.GetComponentInChildren<Text>().text = gm.room.options[0].description;
         rightOption.GetComponentInChildren<Text>().text = gm.room.options[1].description;
+
+        //Set up relic text
+        if (gm.room.relic != null) {
+            relicName.text = gm.room.relic.name;
+            relicDescription.text = gm.room.relic.description;
+        } else {
+            relicName.text = "";
+            relicDescription.text = "";
+        }
+
     }
 
+
+    //TODO rework tempreliconeflag
     public void selectLeftOption() {
         leftOption.interactable = false;
-        rightOption.interactable = true;
+        if (!Relic.tempRelicOneFlag) rightOption.interactable = true;
         gm.optionSelected = gm.room.options[0];
     }
     public void selectRightOption() {
-        leftOption.interactable = true;
+        if (!Relic.tempRelicOneFlag) leftOption.interactable = true;
         rightOption.interactable = false;
         gm.optionSelected = gm.room.options[1];
     }

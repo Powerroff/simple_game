@@ -54,18 +54,29 @@ public class GameManager : MonoBehaviour
 
     public void nextRoom() {
         //Process old room
-        if (room) player.stats.stamina--;
+        if (room) {
+            player.stats.stamina--;
+            if (!uim.leftOption.interactable && !uim.rightOption.interactable) { //selected both options. Rework soon
+                room.options[0].onpress.Invoke();
+                room.options[1].onpress.Invoke();
+                player.stats.stamina--;
+            } else if (optionSelected != null) optionSelected.onpress.Invoke();
+            optionSelected = null;
 
-        if (optionSelected != null) optionSelected.onpress.Invoke();
-        optionSelected = null;
+            processObstacle();
 
-        processObstacle();
+            if (room.relic != null) room.relic.onPickup.Invoke();
+        }
+
         Room tempRoom = gameObject.AddComponent<Room>() as Room;
         if(room) Destroy(room);
         room = tempRoom;
 
         //Increment roomCount
         roomCount++;
+
+        //Generate Relic **TEMP**
+        if (roomCount == 10) room.relic = Relic.tempRelicOne();
 
         //Generate Obstacle
         Obstacle o = Obstacle.tempPackage()[Random.Range(0, Obstacle.tempPackage().Length)];
