@@ -11,7 +11,7 @@ public class UIManager : MonoBehaviour
 
     //UI Elements
     public Button nextRoomButton, leftOption, rightOption;
-    public Image background;
+    public Image background, leftOptionIndicator, rightOptionIndicator;
     public Text hpText, stamText, strText, obsName, obsDescription, relicName, relicDescription;
 
 
@@ -51,8 +51,11 @@ public class UIManager : MonoBehaviour
 
         //Update with new information
         updateWithRoomInformation();
-        setOptionsEnabled(true);
         UpdateStatText();
+
+        //Reset option indicators
+        leftOptionIndicator.gameObject.SetActive(false);
+        rightOptionIndicator.gameObject.SetActive(false);
     }
 
     public void updateWithRoomInformation() {
@@ -68,6 +71,7 @@ public class UIManager : MonoBehaviour
         leftOption.GetComponentInChildren<Text>().text = gm.room.options[0].description;
         rightOption.GetComponentInChildren<Text>().text = gm.room.options[1].description;
 
+
         //Set up relic text
         if (gm.room.relic != null) {
             relicName.text = gm.room.relic.name;
@@ -82,20 +86,26 @@ public class UIManager : MonoBehaviour
 
     //TODO rework tempreliconeflag
     public void selectLeftOption() {
-        leftOption.interactable = false;
-        if (!Relic.tempRelicOneFlag) rightOption.interactable = true;
-        gm.optionSelected = gm.room.options[0];
+        //Ensure right option is unselected if we aren't allowed to take multiple
+        if (!gm.optionsSelected[0] && !Relic.tempRelicOneFlag) {
+            rightOptionIndicator.gameObject.SetActive(false);
+            gm.optionsSelected[1] = false;
+        }
+
+        //Toggle self
+        gm.optionsSelected[0] = !gm.optionsSelected[0];
+        leftOptionIndicator.gameObject.SetActive(!leftOptionIndicator.gameObject.activeSelf);
     }
     public void selectRightOption() {
-        if (!Relic.tempRelicOneFlag) leftOption.interactable = true;
-        rightOption.interactable = false;
-        gm.optionSelected = gm.room.options[1];
-    }
+        //Ensure left option is unselected if we aren't allowed to take multiple
+        if (!gm.optionsSelected[1] && !Relic.tempRelicOneFlag) {
+            leftOptionIndicator.gameObject.SetActive(false);
+            gm.optionsSelected[0] = false;
+        }
 
-
-    public void setOptionsEnabled(bool enabled) {
-        leftOption.interactable = enabled;
-        rightOption.interactable = enabled;
+        //Toggle self
+        gm.optionsSelected[1] = !gm.optionsSelected[1];
+        rightOptionIndicator.gameObject.SetActive(!rightOptionIndicator.gameObject.activeSelf);
     }
 
     

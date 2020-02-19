@@ -35,11 +35,13 @@ public class GameManager : MonoBehaviour
     public UIManager uim;
     public Player player;
     public int roomCount;
-    public Option optionSelected = null;
+    public bool[] optionsSelected;
     // Start is called before the first frame update
     void Start()
     {
         roomCount = 0;
+
+        optionsSelected = new bool[2];
 
         uim.init();
         uim.nextRoom();//A bit weird to do it this way...
@@ -55,16 +57,10 @@ public class GameManager : MonoBehaviour
     public void nextRoom() {
         //Process old room
         if (room) {
-            player.stats.stamina--;
-            if (!uim.leftOption.interactable && !uim.rightOption.interactable) { //selected both options. Rework soon
-                room.options[0].onpress.Invoke();
-                room.options[1].onpress.Invoke();
-                player.stats.stamina--;
-            } else if (optionSelected != null) optionSelected.onpress.Invoke();
-            optionSelected = null;
-
+            processOption();
             processObstacle();
 
+            //Pickup relic
             if (room.relic != null) room.relic.onPickup.Invoke();
         }
 
@@ -90,6 +86,19 @@ public class GameManager : MonoBehaviour
         room.backgroundColor = Random.ColorHSV(0f, .5f, .5f, .5f, 0.5f, 1f);  // I've limited the background colors to the lighter half of the spectrum.
 
 
+    }
+
+    public void processOption() {
+        player.stats.stamina--;
+        int numSelected = 0;
+        for (int i = 0; i < room.options.Length; i++) {
+            if (optionsSelected[i]) {
+                room.options[i].onpress();
+                numSelected++;
+                optionsSelected[i] = false;
+            }
+        }
+        if (numSelected > 0) player.stats.stamina -= (numSelected - 1);
     }
 
     Option[] generateOptions(Option[] possibleOptions) {
