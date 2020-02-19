@@ -9,10 +9,16 @@ public class UIManager : MonoBehaviour
 
     GameManager gm; //Including this here for convenience only.
 
+    public GameObject opmPrefab;
+
     //UI Elements
-    public Button nextRoomButton, leftOption, rightOption;
-    public Image background, leftOptionIndicator, rightOptionIndicator;
+    public Button nextRoomButton;
+    public Image background;
     public Text hpText, stamText, strText, obsName, obsDescription, relicName, relicDescription;
+    public Canvas canvas;
+    
+    public OptionPanelManager opm = null;
+    
 
 
 
@@ -33,8 +39,8 @@ public class UIManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
         if (Input.GetKeyDown(KeyCode.Space)) nextRoom();
-        if (Input.GetKeyDown(KeyCode.Alpha1)) selectLeftOption();
-        if (Input.GetKeyDown(KeyCode.Alpha2)) selectRightOption();
+        if (Input.GetKeyDown(KeyCode.Alpha1)) opm.processInput(0);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) opm.processInput(1);
     }
 
     void UpdateStatText() {
@@ -45,17 +51,19 @@ public class UIManager : MonoBehaviour
 
 
     public void nextRoom() {
-        
-        //GM loads the next room
+
+        //GM processes this room and generates the next room
         gm.nextRoom();
+
+
+        //Destroy old option panel
+        if (opm != null)
+            Destroy(opm.gameObject);
 
         //Update with new information
         updateWithRoomInformation();
         UpdateStatText();
 
-        //Reset option indicators
-        leftOptionIndicator.gameObject.SetActive(false);
-        rightOptionIndicator.gameObject.SetActive(false);
     }
 
     public void updateWithRoomInformation() {
@@ -66,10 +74,9 @@ public class UIManager : MonoBehaviour
         obsName.text = gm.room.obstacle.name;
         obsDescription.text = gm.room.obstacle.description;
 
-
-        //Set up option buttons text
-        leftOption.GetComponentInChildren<Text>().text = gm.room.options[0].description;
-        rightOption.GetComponentInChildren<Text>().text = gm.room.options[1].description;
+        //Set up option panel
+        opm = Instantiate(opmPrefab, canvas.transform).GetComponent<OptionPanelManager>();
+        opm.init();
 
 
         //Set up relic text
@@ -81,31 +88,6 @@ public class UIManager : MonoBehaviour
             relicDescription.text = "";
         }
 
-    }
-
-
-    //TODO rework tempreliconeflag
-    public void selectLeftOption() {
-        //Ensure right option is unselected if we aren't allowed to take multiple
-        if (!gm.optionsSelected[0] && !Relic.tempRelicOneFlag) {
-            rightOptionIndicator.gameObject.SetActive(false);
-            gm.optionsSelected[1] = false;
-        }
-
-        //Toggle self
-        gm.optionsSelected[0] = !gm.optionsSelected[0];
-        leftOptionIndicator.gameObject.SetActive(!leftOptionIndicator.gameObject.activeSelf);
-    }
-    public void selectRightOption() {
-        //Ensure left option is unselected if we aren't allowed to take multiple
-        if (!gm.optionsSelected[1] && !Relic.tempRelicOneFlag) {
-            leftOptionIndicator.gameObject.SetActive(false);
-            gm.optionsSelected[0] = false;
-        }
-
-        //Toggle self
-        gm.optionsSelected[1] = !gm.optionsSelected[1];
-        rightOptionIndicator.gameObject.SetActive(!rightOptionIndicator.gameObject.activeSelf);
     }
 
     

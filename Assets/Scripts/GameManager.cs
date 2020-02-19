@@ -92,10 +92,9 @@ public class GameManager : MonoBehaviour
         player.stats.stamina--;
         int numSelected = 0;
         for (int i = 0; i < room.options.Length; i++) {
-            if (optionsSelected[i]) {
+            if (uim.opm.optionsSelected[i]) {
                 room.options[i].onpress();
                 numSelected++;
-                optionsSelected[i] = false;
             }
         }
         if (numSelected > 0) player.stats.stamina -= (numSelected - 1);
@@ -109,7 +108,8 @@ public class GameManager : MonoBehaviour
         int option1 = Random.Range(0, possibleOptions.Length);
         int option2 = Random.Range(0, possibleOptions.Length - 1);
         if (option2 == option1) option2++;
-        return new Option[] { possibleOptions[option1], possibleOptions[option2] };
+        //return new Option[] { possibleOptions[option1], possibleOptions[option2] };
+        return new Option[] { possibleOptions[option1], possibleOptions[option2], possibleOptions[option1], possibleOptions[option2] };
     }
 
 
