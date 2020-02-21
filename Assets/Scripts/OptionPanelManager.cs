@@ -81,6 +81,8 @@ public class OptionPanelManager : MonoBehaviour
 
     // Processes an input of selecting button i
     public void processInput(int buttonPressed) {
+        if (buttonPressed >= numOptions) return;
+
         //If we're selecting a new option and can't select multiple, active the reset flag
         bool resetFlag = (!optionsSelected[buttonPressed] && !Relic.tempRelicOneFlag); 
         for (int i = 0; i < numOptions; i++) {

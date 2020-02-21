@@ -109,7 +109,7 @@ public class GameManager : MonoBehaviour
         int option2 = Random.Range(0, possibleOptions.Length - 1);
         if (option2 == option1) option2++;
         //return new Option[] { possibleOptions[option1], possibleOptions[option2] };
-        return new Option[] { possibleOptions[option1], possibleOptions[option2], possibleOptions[option1], possibleOptions[option2] };
+        return new Option[] { possibleOptions[option1], possibleOptions[option2], possibleOptions[option1] };
     }
 
 

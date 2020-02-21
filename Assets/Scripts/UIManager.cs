@@ -41,6 +41,8 @@ public class UIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space)) nextRoom();
         if (Input.GetKeyDown(KeyCode.Alpha1)) opm.processInput(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) opm.processInput(1);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) opm.processInput(2);
+        if (Input.GetKeyDown(KeyCode.Alpha4)) opm.processInput(3);
     }
 
     void UpdateStatText() {
