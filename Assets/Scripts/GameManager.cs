@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
@@ -91,12 +92,33 @@ public class GameManager : MonoBehaviour
     }
 
     public void takeAction() {
-        consequences = "";
+
+        if (room.options == null) {
+            Invoke("nextRoom", .5f);
+            return;
+        }
+
         StatsManager oldStats = player.stats.clone();
         int obstacleHp = room.obstacle.health;
-        processOption(); 
+        processOption();
+        generateConsequenceStr(oldStats, obstacleHp);
+        uim.displayConsequence();
+        //generateOptions();
+        if (room.obstacle.health > 0) {
+            //Generate Options
+            room.options = generateOptions(Option.tempPackage());
+            uim.Invoke("newOPM", .5f);
+        } else {
+            room.options = null;
+            uim.endRoom();
+        }
 
-        //Jank
+    }
+
+    //Jank
+    public void generateConsequenceStr(StatsManager oldStats, int obstacleHp) {
+        consequences = "";
+
         int deltaStr = player.stats.strength - oldStats.strength;
         string dStr = (deltaStr >= 0 ? "+" : "") + deltaStr;
         int deltaStam = player.stats.stamina - oldStats.stamina;
@@ -107,16 +129,8 @@ public class GameManager : MonoBehaviour
         string dObsHp = (deltaObsHp >= 0 ? "+" : "") + deltaObsHp;
 
         consequences += "Obstacle " + dObsHp + " health. Player " + dStr + " strength, " + dStam + " stamina, " + dHp + " hp.";
-
-        uim.displayConsequence();
-
-        StartCoroutine(waitForNextRoom());
     }
 
-    IEnumerator waitForNextRoom() {
-        yield return new WaitForSeconds(3);
-        nextRoom();
-    }
 
     public void processOption() {
         player.stats.stamina--;
@@ -139,7 +153,7 @@ public class GameManager : MonoBehaviour
         int option2 = Random.Range(0, possibleOptions.Length - 1);
         if (option2 == option1) option2++;
         //return new Option[] { possibleOptions[option1], possibleOptions[option2] };
-        return new Option[] { possibleOptions[option1], possibleOptions[option2], possibleOptions[option1] };
+        return new Option[] { possibleOptions[option1], possibleOptions[option2] };
     }
 
 

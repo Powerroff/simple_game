@@ -37,6 +37,10 @@ public class OptionPanelManager : MonoBehaviour
         public void setState(bool state) {
             indicator.enabled = state;
         }
+
+        public void setEnabled(bool enabled) {
+            button.interactable = enabled;
+        }
     }
 
 
@@ -45,8 +49,10 @@ public class OptionPanelManager : MonoBehaviour
         numOptions = options.Length;
 
         rectTransform = GetComponent<RectTransform>();
-        width = rectTransform.rect.width;
-        height = rectTransform.rect.height;
+        width = 400f;
+        height = 180f;
+        rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, -height, height);
+        rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
 
         optionButtons = new OptionWrapper[numOptions];
         optionsSelected = new bool[numOptions]; //Does this set them all to false?
@@ -95,6 +101,12 @@ public class OptionPanelManager : MonoBehaviour
                 optionButtons[i].setState(optionsSelected[i]);
             }
 
+        }
+    }
+
+    public void disableButtons() {
+        foreach (OptionWrapper opt in optionButtons) {
+            opt.setEnabled(false);
         }
     }
 

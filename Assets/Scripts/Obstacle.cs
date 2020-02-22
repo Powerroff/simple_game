@@ -38,7 +38,7 @@ public class Obstacle
     }
 
     public UnityAction changeHp(int amount) {
-        return (() => { health += amount; });
+        return (() => { health = Math.Max(health + amount, 0); });
     }
 
 
@@ -58,7 +58,7 @@ public class Obstacle
         o.obstacleClass = ObstacleClass.Nature;
         o.unCleared = o.player.changeStam(-level);
         o.cleared = (() => {; });
-        o.description = string.Format("Natural.  \n Health {0}\n If not cleared, -{1} stamina.", o.health, level + 1);
+        o.description = string.Format("Natural.  \n If not cleared, -{0} stamina.", level + 1);
         o.name = o.getPrefix() + "Underbrush";
         return o;
     }
@@ -69,7 +69,7 @@ public class Obstacle
         o.obstacleClass = ObstacleClass.Nature;
         o.unCleared = (() => {; });
         o.cleared = o.player.changeStam(1);
-        o.description = string.Format("Natural.  \n Health {0}\n If cleared, +1 stamina.", o.health);
+        o.description = string.Format("Natural.  \n If cleared, +1 stamina.");
         o.name = o.getPrefix() + "Tree";
         return o;
     }
@@ -81,7 +81,7 @@ public class Obstacle
         o.obstacleClass = ObstacleClass.Monster;
         o.unCleared = o.player.changeHp(-level-1);
         o.cleared = (() => {; });
-        o.description = string.Format("Monster.  \n Health {0}\n If not killed, -{1} health.", o.health, 1+level);
+        o.description = string.Format("Monster.  \n If not killed, -{0} health.", 1+level);
         o.name = o.getPrefix() + "Hound";
         return o;
     }
@@ -93,7 +93,7 @@ public class Obstacle
         o.obstacleClass = ObstacleClass.Monster;
         o.unCleared = (() => {; });
         o.cleared = o.player.changeHp(1);
-        o.description = string.Format("Monster.  \n Health {0}\n If killed, +1 health.", o.health);
+        o.description = string.Format("Monster.  \n If killed, +1 health.");
         o.name = o.getPrefix() + "Monkey";
         return o;
     }
