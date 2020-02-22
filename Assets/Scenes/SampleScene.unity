@@ -204,7 +204,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1754730594}
-        m_MethodName: nextRoom
+        m_MethodName: processAction
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -671,6 +671,7 @@ MonoBehaviour:
   player: {fileID: 459038330}
   roomCount: 0
   optionsSelected: 
+  consequences: 
 --- !u!4 &1039786924
 Transform:
   m_ObjectHideFlags: 0
@@ -963,6 +964,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   opmPrefab: {fileID: 7502924316763987377, guid: 2d4ff92807db8a445b38cb5bdb07e54c,
+    type: 3}
+  consequencePrefab: {fileID: 3795010388244362423, guid: 48d18384960596b44941d5f85dfd2efd,
     type: 3}
   nextRoomButton: {fileID: 400282700}
   background: {fileID: 2009968944}
