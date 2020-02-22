@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     public Player player;
     public int roomCount;
     public bool[] optionsSelected;
+    public string consequences;
     // Start is called before the first frame update
     void Start()
     {
@@ -44,7 +45,7 @@ public class GameManager : MonoBehaviour
         optionsSelected = new bool[2];
 
         uim.init();
-        uim.nextRoom();//A bit weird to do it this way...
+        nextRoom();
 
     }
 
@@ -57,7 +58,6 @@ public class GameManager : MonoBehaviour
     public void nextRoom() {
         //Process old room
         if (room) {
-            processOption();
             processObstacle();
 
             //Pickup relic
@@ -85,7 +85,37 @@ public class GameManager : MonoBehaviour
         //Generate Background Color
         room.backgroundColor = Random.ColorHSV(0f, .5f, .5f, .5f, 0.5f, 1f);  // I've limited the background colors to the lighter half of the spectrum.
 
+        uim.nextRoom();
 
+
+    }
+
+    public void takeAction() {
+        consequences = "";
+        StatsManager oldStats = player.stats.clone();
+        int obstacleHp = room.obstacle.health;
+        processOption(); 
+
+        //Jank
+        int deltaStr = player.stats.strength - oldStats.strength;
+        string dStr = (deltaStr >= 0 ? "+" : "") + deltaStr;
+        int deltaStam = player.stats.stamina - oldStats.stamina;
+        string dStam = (deltaStam >= 0 ? "+" : "") + deltaStam;
+        int deltaHp = player.stats.hp - oldStats.hp;
+        string dHp = (deltaHp >= 0 ? "+" : "") + deltaHp;
+        int deltaObsHp = room.obstacle.health - obstacleHp;
+        string dObsHp = (deltaObsHp >= 0 ? "+" : "") + deltaObsHp;
+
+        consequences += "Obstacle " + dObsHp + " health. Player " + dStr + " strength, " + dStam + " stamina, " + dHp + " hp.";
+
+        uim.displayConsequence();
+
+        StartCoroutine(waitForNextRoom());
+    }
+
+    IEnumerator waitForNextRoom() {
+        yield return new WaitForSeconds(3);
+        nextRoom();
     }
 
     public void processOption() {
@@ -94,7 +124,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < room.options.Length; i++) {
             if (uim.opm.optionsSelected[i]) {
                 room.options[i].onpress();
-                numSelected++;
+                numSelected++; 
             }
         }
         if (numSelected > 0) player.stats.stamina -= (numSelected - 1);

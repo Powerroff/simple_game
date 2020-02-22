@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     GameManager gm; //Including this here for convenience only.
 
     public GameObject opmPrefab;
+    public GameObject consequencePrefab;
 
     //UI Elements
     public Button nextRoomButton;
@@ -38,8 +39,9 @@ public class UIManager : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
-        if (Input.GetKeyDown(KeyCode.Space)) nextRoom();
-        if (Input.GetKeyDown(KeyCode.Alpha1)) opm.processInput(0);
+        //if (Input.GetKeyDown(KeyCode.Space)) nextRoom();
+        if (Input.GetKeyDown(KeyCode.Space)) processAction();
+            if (Input.GetKeyDown(KeyCode.Alpha1)) opm.processInput(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) opm.processInput(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) opm.processInput(2);
         if (Input.GetKeyDown(KeyCode.Alpha4)) opm.processInput(3);
@@ -51,11 +53,21 @@ public class UIManager : MonoBehaviour
         strText.text = "Strength: " + gm.player.stats.strength;
     }
 
+    public void processAction() {
+        gm.takeAction();
+        ConsPanelManager cBox = Instantiate(consequencePrefab, opm.transform).GetComponentInChildren<ConsPanelManager>();
+        cBox.init();
+    }
+
+    public void displayConsequence() {
+        ConsPanelManager cBox = Instantiate(consequencePrefab, opm.transform).GetComponentInChildren<ConsPanelManager>();
+        cBox.init();
+    }
 
     public void nextRoom() {
 
         //GM processes this room and generates the next room
-        gm.nextRoom();
+        
 
 
         //Destroy old option panel

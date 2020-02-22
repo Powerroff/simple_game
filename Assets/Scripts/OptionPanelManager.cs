@@ -16,7 +16,7 @@ public class OptionPanelManager : MonoBehaviour
 
     //Properties for self
     RectTransform rectTransform;
-    float width;
+    public float width;
     float height;
     public GameObject buttonPrefab;
 
@@ -26,7 +26,6 @@ public class OptionPanelManager : MonoBehaviour
         Button button;
         Image indicator;
 
-        //Using a pointer here... maybe not best practice??
         public OptionWrapper(Button button, Text text,  Image indicator) {
             this.text = text;
             this.button = button;

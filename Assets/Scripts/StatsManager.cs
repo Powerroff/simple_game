@@ -17,4 +17,8 @@ public class StatsManager
         this.stamina = stamina;
         this.strength = strength;
     }
+
+    public StatsManager clone() {
+        return new StatsManager(hp, stamina, strength);
+    }
 }
