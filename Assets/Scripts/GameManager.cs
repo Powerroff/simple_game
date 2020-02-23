@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour
         roomCount++;
 
         //Generate Relic **TEMP**
-        if (roomCount == 10) room.relic = Relic.tempRelicOne();
+        //if (roomCount == 10) room.relic = Relic.tempRelicOne();
 
         //Generate Obstacle
         Obstacle o = Obstacle.tempPackage()[Random.Range(0, Obstacle.tempPackage().Length)];
@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
         
 
         //Generate Options
-        room.options = generateOptions(Option.tempPackage());
+        room.options = new List<Option>(new Option[] { Option.hackSlash(), Option.harvest() });
 
         //Generate Background Color
         room.backgroundColor = Random.ColorHSV(0f, .5f, .5f, .5f, 0.5f, 1f);  // I've limited the background colors to the lighter half of the spectrum.
@@ -93,25 +93,21 @@ public class GameManager : MonoBehaviour
 
     public void takeAction() {
 
-        if (room.options == null) {
+        if (room.options.Count == 0) {
             Invoke("nextRoom", .5f);
             return;
         }
 
         StatsManager oldStats = player.stats.clone();
         int obstacleHp = room.obstacle.health;
-        processOption();
+        nextOptions(processOption()); //hmm
         generateConsequenceStr(oldStats, obstacleHp);
         uim.displayConsequence();
-        //generateOptions();
-        if (room.obstacle.health > 0) {
-            //Generate Options
-            room.options = generateOptions(Option.tempPackage());
-            uim.Invoke("newOPM", .5f);
-        } else {
-            room.options = null;
+
+        if (room.options.Count == 0)
             uim.endRoom();
-        }
+        else
+            uim.Invoke("newOPM", .5f);
 
     }
 
@@ -132,28 +128,28 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void processOption() {
+    public List<Option> processOption() {
         player.stats.stamina--;
-        int numSelected = 0;
-        for (int i = 0; i < room.options.Length; i++) {
+        List<Option> selected = new List<Option>();
+        for (int i = 0; i < room.options.Count; i++) {
             if (uim.opm.optionsSelected[i]) {
                 room.options[i].onpress();
-                numSelected++; 
+                selected.Add(room.options[i]);
             }
         }
-        if (numSelected > 0) player.stats.stamina -= (numSelected - 1);
+        player.stats.stamina -= System.Math.Max(selected.Count - 1, 0);
+        return selected;
     }
 
-    Option[] generateOptions(Option[] possibleOptions) {
-        if (possibleOptions.Length < 2) {
-            print("Uh Oh");
-            Application.Quit();
+    public void nextOptions(List<Option> selected) {
+        room.options = new List<Option>();
+        foreach (Option option in selected) {
+            if (room.obstacle.health > 0) {
+                room.options.AddRange(option.nextOptions);
+            } else {
+                room.options.AddRange(option.onKill);
+            }
         }
-        int option1 = Random.Range(0, possibleOptions.Length);
-        int option2 = Random.Range(0, possibleOptions.Length - 1);
-        if (option2 == option1) option2++;
-        //return new Option[] { possibleOptions[option1], possibleOptions[option2] };
-        return new Option[] { possibleOptions[option1], possibleOptions[option2] };
     }
 
 

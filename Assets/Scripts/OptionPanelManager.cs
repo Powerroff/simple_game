@@ -35,7 +35,8 @@ public class OptionPanelManager : MonoBehaviour
             text.text = newText;
         }
         public void setState(bool state) {
-            indicator.enabled = state;
+            if (button.interactable) //Maybe make this check somewhere else
+                indicator.enabled = state;
         }
 
         public void setEnabled(bool enabled) {
@@ -45,7 +46,7 @@ public class OptionPanelManager : MonoBehaviour
 
 
     public void init() {
-        options = GameManager.instance.room.options;
+        options = GameManager.instance.room.options.ToArray();
         numOptions = options.Length;
 
         rectTransform = GetComponent<RectTransform>();
@@ -55,7 +56,7 @@ public class OptionPanelManager : MonoBehaviour
         rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
 
         optionButtons = new OptionWrapper[numOptions];
-        optionsSelected = new bool[numOptions]; //Does this set them all to false?
+        optionsSelected = new bool[numOptions]; //Does instantiating set them all to false? I do this later anyways
 
         generateButtons();
     }
