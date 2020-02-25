@@ -42,6 +42,20 @@ public class OptionPanelManager : MonoBehaviour
         public void setEnabled(bool enabled) {
             button.interactable = enabled;
         }
+
+        public void setColor(int rarity) {
+            switch (rarity) {
+                case 1:
+                    indicator.color = new Color(0f, 0f, 1f, 0.15f);
+                    break;
+                case 0:
+                default: 
+                    indicator.color = new Color(0f, 1f, 0f, 0.15f);
+                    break;
+                
+            }
+        }
+
     }
 
 
@@ -75,7 +89,8 @@ public class OptionPanelManager : MonoBehaviour
 
             optionButtons[i].setState(false);
             optionButtons[i].setText(options[i].description);
-            
+            optionButtons[i].setColor(options[i].rarity);
+
             optionsSelected[i] = false;
         }
     }

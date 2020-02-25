@@ -18,10 +18,9 @@ public class Obstacle
     //These variables will be specific to the obstacle
     public int health;
     public ObstacleClass obstacleClass;
-    public UnityAction unCleared;
-    public UnityAction cleared;
-    public string name;
-    public string description;
+    public UnityAction unCleared, cleared;
+    public string name, description;
+    public Option uniqueOption; //JANK. Can't invoke the method before the obstacle is generated so...
 
 
     //Constructor and methods
@@ -29,6 +28,7 @@ public class Obstacle
         //Look up the global variables
         player = GameManager.instance.player;
         roomCount = GameManager.instance.roomCount;
+        uniqueOption = null;
     }
 
     string getPrefix() {
@@ -69,6 +69,7 @@ public class Obstacle
         o.obstacleClass = ObstacleClass.Nature;
         o.unCleared = (() => {; });
         o.cleared = o.player.changeStam(1);
+        o.uniqueOption = Option.climbTree();
         o.description = string.Format("Natural.  \n If cleared, +1 stamina.");
         o.name = o.getPrefix() + "Tree";
         return o;

@@ -149,6 +149,9 @@ public class GameManager : MonoBehaviour
             } else {
                 room.options.AddRange(option.onKill);
             }
+        if (room.options.Count > 0 && room.obstacle.uniqueOption != null) {
+                room.options.Add(room.obstacle.uniqueOption);
+            }
         }
     }
 

@@ -13,6 +13,7 @@ public class Option
     public string description;
     public UnityAction onpress;  //Capitalization?
     public List<Option> nextOptions, onKill;
+    public int rarity;
 
 
 
@@ -22,6 +23,17 @@ public class Option
         obstacle = GameManager.instance.room.obstacle;
         nextOptions = new List<Option>();
         onKill = new List<Option>();
+        rarity = 0;
+    }
+
+    public Option(bool usesObstacle) {
+        onpress = (() => {; });
+        player = GameManager.instance.player;
+        if (usesObstacle)
+            obstacle = GameManager.instance.room.obstacle;
+        nextOptions = new List<Option>();
+        onKill = new List<Option>();
+        rarity = 0;
     }
 
     void setupStats(int monsterDmg, int natureDmg, int hpChange, int stamChange, int strChange) {
@@ -228,6 +240,18 @@ public class Option
         return o;
     }
     
+
+    //REFACTOR EVERYTHING INVOLVED HERE PLEASE
+    public static Option climbTree() {
+        int stamGain = 5;
+
+        Option o = new Option(false);
+        o.description = string.Format("Climb Tree");
+
+        o.onpress = o.player.changeStam(stamGain);
+        o.rarity = 1;
+        return o;
+    }
 
     
 }
