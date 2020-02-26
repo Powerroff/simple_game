@@ -20,15 +20,11 @@ public class Player : MonoBehaviour
     }
 
     void init() {
-        stats = new StatsManager(100,100,0);
+        stats = new StatsManager(100,100);
         equipment = new EquipmentManager();
     }
 
     //Research Action vs UnityAction?
-
-    public UnityAction changeStr(int amount) {
-        return (() => { stats.strength += amount; });
-    }
 
     public UnityAction changeStam(int amount) {
         return (() => { stats.stamina += amount; });

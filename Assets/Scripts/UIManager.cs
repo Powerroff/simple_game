@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
     //UI Elements
     public Button nextRoomButton;
     public Image background;
-    public Text hpText, stamText, strText, obsName, obsHp, obsDescription, relicName, relicDescription;
+    public Text hpText, stamText, obsName, obsHp, obsDescription, relicName, relicDescription;
     public Canvas canvas;
     
     public OptionPanelManager opm = null;
@@ -47,7 +47,6 @@ public class UIManager : MonoBehaviour
     void UpdateStatText() {
         hpText.text = "HP: " + gm.player.stats.hp;
         stamText.text = "Stamina: " + gm.player.stats.stamina;
-        strText.text = "Strength: " + gm.player.stats.strength;
         obsHp.text = "Health: " + gm.room.obstacle.health;
     }
 

@@ -115,8 +115,6 @@ public class GameManager : MonoBehaviour
     public void generateConsequenceStr(StatsManager oldStats, int obstacleHp) {
         consequences = "";
 
-        int deltaStr = player.stats.strength - oldStats.strength;
-        string dStr = (deltaStr >= 0 ? "+" : "") + deltaStr;
         int deltaStam = player.stats.stamina - oldStats.stamina;
         string dStam = (deltaStam >= 0 ? "+" : "") + deltaStam;
         int deltaHp = player.stats.hp - oldStats.hp;
@@ -124,7 +122,7 @@ public class GameManager : MonoBehaviour
         int deltaObsHp = room.obstacle.health - obstacleHp;
         string dObsHp = (deltaObsHp >= 0 ? "+" : "") + deltaObsHp;
 
-        consequences += "Obstacle " + dObsHp + " health. Player " + dStr + " strength, " + dStam + " stamina, " + dHp + " hp.";
+        consequences += "Obstacle " + dObsHp + " health. Player "  + dStam + " stamina, " + dHp + " hp.";
     }
 
 
