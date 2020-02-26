@@ -6,45 +6,27 @@ using UnityEngine.Events;
 public class Option
 {
     //These (global) variables are looked up from GameManager.instance upon creation
-    Player player;
-    Obstacle obstacle;
+    public GameManager gm;
 
     //Other variables
     public string description;
     public UnityAction onpress;  //Capitalization?
-    public List<Option> nextOptions, onKill;
+    public List<Option> onKill;
     public int rarity;
 
 
 
     public Option() {
         onpress = (() => {; });
-        player = GameManager.instance.player;
-        obstacle = GameManager.instance.room.obstacle;
-        nextOptions = new List<Option>();
+        gm = GameManager.instance;
         onKill = new List<Option>();
         rarity = 0;
     }
 
-    public Option(bool usesObstacle) {
-        onpress = (() => {; });
-        player = GameManager.instance.player;
-        if (usesObstacle)
-            obstacle = GameManager.instance.room.obstacle;
-        nextOptions = new List<Option>();
-        onKill = new List<Option>();
-        rarity = 0;
-    }
-
+    //Lazy evaluation (hopefully) so that option tree can be generated at start and not re-updated at each change
     void setupStats(int monsterDmg, int natureDmg, int hpChange, int stamChange) {
-        if (obstacle.obstacleClass == Obstacle.ObstacleClass.Monster) {            //Maybe could be reworked a bit
-            onpress += obstacle.changeHp(monsterDmg);
-        } else if (obstacle.obstacleClass == Obstacle.ObstacleClass.Nature) {
-            onpress += obstacle.changeHp(natureDmg);
-        }
-
-        onpress += player.changeHp(hpChange);
-        onpress += player.changeStam(stamChange);
+        onpress += () => gm.getPlayer().updateStats(hpChange,  stamChange);
+        onpress += () => gm.getObstacle().assignDamage(monsterDmg, natureDmg);
     }
 
     void randomRewards(Option[] rewards, float[] probs) {
@@ -77,7 +59,6 @@ public class Option
         o.description = string.Format("Hack and Slash\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.nextOptions.AddRange(new Option[] { savageSlash(), clearPath() });
         o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.75f, 0.5f });
 
         return o;
@@ -92,7 +73,6 @@ public class Option
         o.description = string.Format("Harvest\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.nextOptions = new List<Option>(new Option[] { clearPath(), skilledExploration() });
         o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.5f, 0.75f });
 
         return o;
@@ -107,7 +87,6 @@ public class Option
         o.description = string.Format("Savage Slash\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.nextOptions.AddRange(new Option[] { recklessAssault(), swiftKill() });
         o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.75f, 0.5f });
 
         return o;
@@ -122,7 +101,6 @@ public class Option
         o.description = string.Format("Clear a Path\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.nextOptions.AddRange(new Option[] { swiftKill(), layLand(), rangerTactics() });
         o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.75f, 0.75f });
 
         return o;
@@ -137,7 +115,6 @@ public class Option
         o.description = string.Format("Skilled Exploration\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.nextOptions.AddRange(new Option[] { layLand(), rangerTactics(), conquerWilderness() });
         o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.5f, 0.75f });
 
         return o;
@@ -240,14 +217,13 @@ public class Option
     }
     
 
-    //REFACTOR EVERYTHING INVOLVED HERE PLEASE
     public static Option climbTree() {
         int stamGain = 5;
 
-        Option o = new Option(false);
+        Option o = new Option();
         o.description = string.Format("Climb Tree");
 
-        o.onpress = o.player.changeStam(stamGain);
+        o.setupStats(0, 0, 0, stamGain);
         o.rarity = 1;
         return o;
     }

@@ -10,8 +10,7 @@ public class UIManager : MonoBehaviour
 
     GameManager gm; //Including this here for convenience only.
 
-    public GameObject opmPrefab;
-    public GameObject consequencePrefab;
+    public GameObject opmPrefab, consequencePrefab, optSelectPrefab;
 
     //UI Elements
     public Button nextRoomButton;
@@ -20,6 +19,7 @@ public class UIManager : MonoBehaviour
     public Canvas canvas;
     
     public OptionPanelManager opm = null;
+    public OptSelectManager osm = null;
     public ConsPanelManager consequencePanel = null;
     public ConsPanelManager oldConsequencePanel = null;
 
@@ -42,6 +42,16 @@ public class UIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2)) opm.processInput(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) opm.processInput(2);
         if (Input.GetKeyDown(KeyCode.Alpha4)) opm.processInput(3);
+        if (Input.GetKeyDown(KeyCode.Alpha0)) {
+            if (osm == null) {
+                osm = Instantiate(optSelectPrefab, canvas.transform).GetComponent<OptSelectManager>();
+                osm.init();
+            } else {
+                Destroy(osm.gameObject);
+                osm = null;
+            }
+        }
+
     }
 
     void UpdateStatText() {
@@ -80,6 +90,7 @@ public class UIManager : MonoBehaviour
     }
 
     public void nextRoom() {
+
 
         //Destroy old option panel
         if (oldConsequencePanel != null)

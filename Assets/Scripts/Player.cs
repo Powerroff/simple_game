@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
 {
     public StatsManager stats;
     public EquipmentManager equipment;
+    public OptionTree optionTree;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,16 +23,14 @@ public class Player : MonoBehaviour
     void init() {
         stats = new StatsManager(100,100);
         equipment = new EquipmentManager();
+        optionTree = OptionTree.defaultTree();
     }
 
     //Research Action vs UnityAction?
 
-    public UnityAction changeStam(int amount) {
-        return (() => { stats.stamina += amount; });
-    }
-
-    public UnityAction changeHp(int amount) {
-        return (() => { stats.hp += amount; });
+    public void updateStats(int hpChange, int stamChange) {
+        stats.hp += hpChange;
+        stats.stamina += stamChange;
     }
 
 }

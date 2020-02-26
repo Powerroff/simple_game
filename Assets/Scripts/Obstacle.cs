@@ -12,7 +12,6 @@ public class Obstacle
     readonly string[] naturePrefixes = { "", "Overgrown ", "Sinister ", "Evolved ", "Carnivorous ", "Possessed " };
 
     //These (global) variables will be looked up from GameManager.instance upon creation
-    Player player;
     int roomCount;
 
     //These variables will be specific to the obstacle
@@ -20,15 +19,16 @@ public class Obstacle
     public ObstacleClass obstacleClass;
     public UnityAction unCleared, cleared;
     public string name, description;
-    public Option uniqueOption; //JANK. Can't invoke the method before the obstacle is generated so...
+    public Option uniqueOption;
 
 
     //Constructor and methods
     public Obstacle() {
         //Look up the global variables
-        player = GameManager.instance.player;
         roomCount = GameManager.instance.roomCount;
         uniqueOption = null;
+        unCleared = () => {; };
+        cleared = () => {; };
     }
 
     string getPrefix() {
@@ -40,6 +40,14 @@ public class Obstacle
     public UnityAction changeHp(int amount) {
         return (() => { health = Math.Max(health + amount, 0); });
     }
+
+    public void assignDamage(int monsterDmg, int natureDmg) {
+        if (obstacleClass == ObstacleClass.Monster)
+            health = Math.Max(health + monsterDmg, 0);
+        if (obstacleClass == ObstacleClass.Nature)
+            health = Math.Max(health + natureDmg, 0);
+    }
+
 
 
 
@@ -56,8 +64,8 @@ public class Obstacle
         int level = o.roomCount / 5;
         o.health = 1 + level;
         o.obstacleClass = ObstacleClass.Nature;
-        o.unCleared = o.player.changeStam(-level);
-        o.cleared = (() => {; });
+        //o.unCleared = o.player.changeStam(-level);
+        //o.cleared = (() => {; });
         o.description = string.Format("Natural.  \n If not cleared, -{0} stamina.", level + 1);
         o.name = o.getPrefix() + "Underbrush";
         return o;
@@ -67,8 +75,8 @@ public class Obstacle
         Obstacle o = new Obstacle();
         o.health = 2 + o.roomCount / 5;
         o.obstacleClass = ObstacleClass.Nature;
-        o.unCleared = (() => {; });
-        o.cleared = o.player.changeStam(1);
+        //o.unCleared = (() => {; });
+        //o.cleared = o.player.changeStam(1);
         o.uniqueOption = Option.climbTree();
         o.description = string.Format("Natural.  \n If cleared, +1 stamina.");
         o.name = o.getPrefix() + "Tree";
@@ -80,8 +88,8 @@ public class Obstacle
         int level = o.roomCount / 5;
         o.health = 1 + level;
         o.obstacleClass = ObstacleClass.Monster;
-        o.unCleared = o.player.changeHp(-level-1);
-        o.cleared = (() => {; });
+        //o.unCleared = o.player.changeHp(-level-1);
+        //o.cleared = (() => {; });
         o.description = string.Format("Monster.  \n If not killed, -{0} health.", 1+level);
         o.name = o.getPrefix() + "Hound";
         return o;
@@ -92,8 +100,8 @@ public class Obstacle
         int level = o.roomCount / 5;
         o.health = 2 + level;
         o.obstacleClass = ObstacleClass.Monster;
-        o.unCleared = (() => {; });
-        o.cleared = o.player.changeHp(1);
+        //o.unCleared = (() => {; });
+        //o.cleared = o.player.changeHp(1);
         o.description = string.Format("Monster.  \n If killed, +1 health.");
         o.name = o.getPrefix() + "Monkey";
         return o;

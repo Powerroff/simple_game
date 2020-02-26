@@ -77,11 +77,11 @@ public class GameManager : MonoBehaviour
 
         //Generate Obstacle
         Obstacle o = Obstacle.tempPackage()[Random.Range(0, Obstacle.tempPackage().Length)];
-        room.obstacle = o; //A bit jank that we need to set the obstacle before generating the options
+        room.obstacle = o;
         
 
         //Generate Options
-        room.options = new List<Option>(new Option[] { Option.hackSlash(), Option.harvest() });
+        room.options = player.optionTree.getFirstLayer();
 
         //Generate Background Color
         room.backgroundColor = Random.ColorHSV(0f, .5f, .5f, .5f, 0.5f, 1f);  // I've limited the background colors to the lighter half of the spectrum.
@@ -126,12 +126,12 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public List<Option> processOption() {
+    public List<OptionTree.OptionNode> processOption() {
         player.stats.stamina--;
-        List<Option> selected = new List<Option>();
+        List<OptionTree.OptionNode> selected = new List<OptionTree.OptionNode>();
         for (int i = 0; i < room.options.Count; i++) {
             if (uim.opm.optionsSelected[i]) {
-                room.options[i].onpress();
+                room.options[i].option.onpress();
                 selected.Add(room.options[i]);
             }
         }
@@ -139,16 +139,19 @@ public class GameManager : MonoBehaviour
         return selected;
     }
 
-    public void nextOptions(List<Option> selected) {
-        room.options = new List<Option>();
-        foreach (Option option in selected) {
+    public void nextOptions(List<OptionTree.OptionNode> selected) {
+        room.options = new List<OptionTree.OptionNode>();
+        foreach (OptionTree.OptionNode node in selected) {
             if (room.obstacle.health > 0) {
-                room.options.AddRange(option.nextOptions);
+                room.options.AddRange(player.optionTree.getChildren(node));
             } else {
-                room.options.AddRange(option.onKill);
+                foreach (Option o in node.option.onKill) {
+                    room.options.Add(new OptionTree.OptionNode(0, null, o));
+                }
+                
             }
         if (room.options.Count > 0 && room.obstacle.uniqueOption != null) {
-                room.options.Add(room.obstacle.uniqueOption);
+                room.options.Add(new OptionTree.OptionNode(0, null, room.obstacle.uniqueOption));
             }
         }
     }
@@ -163,7 +166,13 @@ public class GameManager : MonoBehaviour
             }
     }
 
+    public Player getPlayer() {
+        return player;
+    }
 
+    public Obstacle getObstacle() {
+        return room.obstacle;
+    }
 
 
 
