@@ -11,29 +11,34 @@ public class Option
     //Other variables
     public string description;
     public UnityAction onpress;  //Capitalization?
-    public List<Option> onKill;
     public int rarity;
+
+    Option[] rewards;
+    float[] rewardProbs;
 
 
 
     public Option() {
         onpress = (() => {; });
         gm = GameManager.instance;
-        onKill = new List<Option>();
         rarity = 0;
+        rewards = new Option[0] { };
     }
 
-    //Lazy evaluation (hopefully) so that option tree can be generated at start and not re-updated at each change
+    //Lazy evaluation so that option tree can be static even when room is updating
+    //Makes use of { get; set; } syntax in GameManager to have implicit get and set functions rather than accessing properties
     void setupStats(int monsterDmg, int natureDmg, int hpChange, int stamChange) {
-        onpress += () => gm.getPlayer().updateStats(hpChange,  stamChange);
-        onpress += () => gm.getObstacle().assignDamage(monsterDmg, natureDmg);
+        onpress += () => gm.player.updateStats(hpChange,  stamChange);
+        onpress += () => gm.room.obstacle.assignDamage(monsterDmg, natureDmg);
     }
 
-    void randomRewards(Option[] rewards, float[] probs) {
+    public List<Option> randomRewards() {
+        List<Option> onKill = new List<Option>();
         for (int i = 0; i < rewards.Length; i++) {
-            if (Random.Range(0f, 1f) < probs[i])
+            if (Random.Range(0f, 1f) < rewardProbs[i])
                 onKill.Add(rewards[i]);
         }
+        return onKill;
     }
 
 
@@ -59,7 +64,8 @@ public class Option
         o.description = string.Format("Hack and Slash\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.75f, 0.5f });
+        o.rewards = new Option[] { treatWounds(), takeShelter() };
+        o.rewardProbs = new float[] { 0.75f, 0.5f };
 
         return o;
     }
@@ -73,7 +79,8 @@ public class Option
         o.description = string.Format("Harvest\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.5f, 0.75f });
+        o.rewards = new Option[] { treatWounds(), takeShelter() };
+        o.rewardProbs = new float[] { 0.5f, 0.75f };
 
         return o;
     }
@@ -87,7 +94,8 @@ public class Option
         o.description = string.Format("Savage Slash\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.75f, 0.5f });
+        o.rewards = new Option[] { treatWounds(), takeShelter() };
+        o.rewardProbs = new float[] { 0.75f, 0.5f };
 
         return o;
     }
@@ -101,7 +109,8 @@ public class Option
         o.description = string.Format("Clear a Path\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.75f, 0.75f });
+        o.rewards = new Option[] { treatWounds(), takeShelter() };
+        o.rewardProbs = new float[] { 0.75f, 0.75f };
 
         return o;
     }
@@ -115,7 +124,8 @@ public class Option
         o.description = string.Format("Skilled Exploration\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.5f, 0.75f });
+        o.rewards = new Option[] { treatWounds(), takeShelter() };
+        o.rewardProbs = new float[] { 0.5f, 0.75f };
 
         return o;
     }
@@ -129,7 +139,8 @@ public class Option
         o.description = string.Format("Reckless Assault\n\n{0} Damage to monsters\n Spend {1} extra stamina", monsterDmg, stamLoss);
         o.setupStats(-monsterDmg, 0, 0, -stamLoss);
 
-        o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.75f, 0.25f });
+        o.rewards = new Option[] { treatWounds(), takeShelter() };
+        o.rewardProbs = new float[] { 0.75f, 0.25f };
 
         return o;
     }
@@ -143,7 +154,8 @@ public class Option
         o.description = string.Format("Swift Kill\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.75f, 0.5f });
+        o.rewards = new Option[] { treatWounds(), takeShelter() };
+        o.rewardProbs = new float[] { 0.75f, 0.5f };
 
         return o;
     }
@@ -157,7 +169,8 @@ public class Option
         o.description = string.Format("Lay of the Land\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.randomRewards(new Option[] { treatWounds(), takeShelter(), investigateSurroundings() }, new float[] { 0.75f, 0.75f, .25f });
+        o.rewards = new Option[] { treatWounds(), takeShelter(), investigateSurroundings() };
+        o.rewardProbs = new float[] { 0.75f, 0.75f, .25f };
 
         return o;
     }
@@ -171,7 +184,8 @@ public class Option
         o.description = string.Format("Ranger Tactics\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.5f, 0.75f });
+        o.rewards = new Option[] { treatWounds(), takeShelter() };
+        o.rewardProbs = new float[] { 0.5f, 0.75f };
 
         return o;
     }
@@ -185,7 +199,8 @@ public class Option
         o.description = string.Format("Conquer the Wilderness\n\n{0} Damage to nature\n Spend {1} extra stamina", natureDmg, stamLoss);
         o.setupStats(0, -natureDmg, 0, -stamLoss);
 
-        o.randomRewards(new Option[] { treatWounds(), takeShelter() }, new float[] { 0.25f, 0.75f });
+        o.rewards = new Option[] { treatWounds(), takeShelter() };
+        o.rewardProbs = new float[] { 0.25f, 0.75f };
 
         return o;
     }

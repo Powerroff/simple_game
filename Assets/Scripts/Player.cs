@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     }
 
     void init() {
-        stats = new StatsManager(100,100);
+        stats = new StatsManager(100, 90 ,100);
         equipment = new EquipmentManager();
         optionTree = OptionTree.defaultTree();
     }

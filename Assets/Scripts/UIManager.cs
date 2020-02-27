@@ -55,7 +55,7 @@ public class UIManager : MonoBehaviour
     }
 
     void UpdateStatText() {
-        hpText.text = "HP: " + gm.player.stats.hp;
+        hpText.text = "HP: " + gm.player.stats.hp + "/" + gm.player.stats.maxHp;
         stamText.text = "Stamina: " + gm.player.stats.stamina;
         obsHp.text = "Health: " + gm.room.obstacle.health;
     }

@@ -32,18 +32,20 @@ public class GameManager : MonoBehaviour
     }
     //^^ Above section creates a static GameManager
 
-    public Room room;
-    public UIManager uim;
-    public Player player;
-    public int roomCount;
-    public bool[] optionsSelected;
-    public string consequences;
+    public Room room { get; set; }
+    public UIManager uim { get; set; }
+    public Player player { get; set; }
+    public int roomCount { get; set; }
+    public bool[] optionsSelected { get; set; }
+    public string consequences { get; set; }
+
     // Start is called before the first frame update
     void Start()
     {
         roomCount = 0;
 
-        optionsSelected = new bool[2];
+        uim = GameObject.Find("UIManager").GetComponent<UIManager>();
+        player = GameObject.Find("Player").GetComponent<Player>();
 
         uim.init();
         nextRoom();
@@ -76,7 +78,7 @@ public class GameManager : MonoBehaviour
         //if (roomCount == 10) room.relic = Relic.tempRelicOne();
 
         //Generate Obstacle
-        Obstacle o = Obstacle.tempPackage()[Random.Range(0, Obstacle.tempPackage().Length)];
+        Obstacle o = Obstacle.defaultPackage()[Random.Range(0, 4)];
         room.obstacle = o;
         
 
@@ -145,7 +147,7 @@ public class GameManager : MonoBehaviour
             if (room.obstacle.health > 0) {
                 room.options.AddRange(player.optionTree.getChildren(node));
             } else {
-                foreach (Option o in node.option.onKill) {
+                foreach (Option o in node.option.randomRewards()) {
                     room.options.Add(new OptionTree.OptionNode(0, null, o));
                 }
                 
@@ -164,14 +166,6 @@ public class GameManager : MonoBehaviour
             } else {
                 room.obstacle.cleared.Invoke();
             }
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public Obstacle getObstacle() {
-        return room.obstacle;
     }
 
 

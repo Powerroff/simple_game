@@ -14,7 +14,7 @@ public class OptSelectManager : MonoBehaviour
 
     public void init() {
         boxes = new Dropdown[][] { layer0, layer1, layer2 };
-        optionTree = GameManager.instance.getPlayer().optionTree;
+        optionTree = GameManager.instance.player.optionTree;
         for (int i = 0; i < optionTree.nodeTree.Length; i++) {
             for (int j = 0; j < optionTree.nodeTree[i].Length; j++) {
                 boxes[i][j].ClearOptions();
