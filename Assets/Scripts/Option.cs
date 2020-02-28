@@ -13,10 +13,14 @@ public class Option
     public UnityAction onpress;  //Capitalization?
     public int rarity;
 
+    public OptionTree.OptionNode node;
+
     Option[] rewards;
     float[] rewardProbs;
 
-
+    public List<Option> getChildren() {
+        return node.getChildren();
+    }
 
     public Option() {
         onpress = (() => {; });
@@ -243,5 +247,33 @@ public class Option
         return o;
     }
 
-    
+    public static Option prepare() {
+        int monsterDmg = 1;
+        int natureDmg = 1;
+
+        Option o = new Option();
+        o.description = string.Format("Prepare \n\n Your next action does not spend stamina");
+
+        o.rewards = new Option[] { treatWounds(), takeShelter(), investigateSurroundings() };
+        o.rewardProbs = new float[] { 0.75f, 0.75f,  1f };
+        o.setupStats(1, 1, 0, 0);
+        o.rarity = 1;
+        return o;
+    }
+
+    public static Option dualStrike() {
+        int dmg = 4;
+
+        Option o = new Option();
+        o.description = string.Format("Dual Strike. Deal {0} to both types.", dmg);
+        o.setupStats(-dmg, -dmg, 0, 0);
+
+        o.rewards = new Option[] { treatWounds(), takeShelter() };
+        o.rewardProbs = new float[] { 0.5f, 0.5f };
+
+        return o;
+    }
+
+     
+
 }

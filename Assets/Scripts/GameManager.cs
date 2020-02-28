@@ -128,12 +128,12 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public List<OptionTree.OptionNode> processOption() {
+    public List<Option> processOption() {
         player.stats.stamina--;
-        List<OptionTree.OptionNode> selected = new List<OptionTree.OptionNode>();
+        List<Option> selected = new List<Option>();
         for (int i = 0; i < room.options.Count; i++) {
             if (uim.opm.optionsSelected[i]) {
-                room.options[i].option.onpress();
+                room.options[i].onpress();
                 selected.Add(room.options[i]);
             }
         }
@@ -141,21 +141,19 @@ public class GameManager : MonoBehaviour
         return selected;
     }
 
-    public void nextOptions(List<OptionTree.OptionNode> selected) {
-        room.options = new List<OptionTree.OptionNode>();
-        foreach (OptionTree.OptionNode node in selected) {
+    public void nextOptions(List<Option> selected) {
+        room.options = new List<Option>();
+        foreach (Option option in selected) {
             if (room.obstacle.health > 0) {
-                room.options.AddRange(player.optionTree.getChildren(node));
+                room.options.AddRange(option.getChildren());
             } else {
-                foreach (Option o in node.option.randomRewards()) {
-                    room.options.Add(new OptionTree.OptionNode(0, null, o));
+                room.options.AddRange(option.randomRewards());
                 }
                 
             }
-        if (room.options.Count > 0 && room.obstacle.uniqueOption != null) {
-                room.options.Add(new OptionTree.OptionNode(0, null, room.obstacle.uniqueOption));
-            }
-        }
+        if (room.options.Count > 0 && room.obstacle.uniqueOption != null) 
+            room.options.Add(room.obstacle.uniqueOption);
+            
     }
 
 

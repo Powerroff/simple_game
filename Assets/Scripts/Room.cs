@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class Room : MonoBehaviour
 {
     public Color backgroundColor;
-    public List<OptionTree.OptionNode> options;
+    public List<Option> options;
     public Obstacle obstacle;
     public Relic relic = null;
 

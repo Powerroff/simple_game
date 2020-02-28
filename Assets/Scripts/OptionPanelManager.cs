@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class OptionPanelManager : MonoBehaviour
 {
     //Global vars that ar looked up
-    OptionTree.OptionNode[] options;
+    Option[] options;
     int numOptions;
 
     //Variables for self
@@ -88,8 +88,8 @@ public class OptionPanelManager : MonoBehaviour
             optionButtons[i] = new OptionWrapper(g.GetComponent<Button>(), g.GetComponentInChildren<Text>(), g.transform.Find("OptionIndicator").GetComponent<Image>());
 
             optionButtons[i].setState(false);
-            optionButtons[i].setText(options[i].option.description);
-            optionButtons[i].setColor(options[i].option.rarity);
+            optionButtons[i].setText(options[i].description);
+            optionButtons[i].setColor(options[i].rarity);
 
             optionsSelected[i] = false;
         }

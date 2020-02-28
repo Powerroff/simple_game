@@ -733,12 +733,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10854e6b686557341bf8ac97dff03493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  room: {fileID: 0}
-  uim: {fileID: 1754730594}
-  player: {fileID: 459038330}
-  roomCount: 0
-  optionsSelected: 
-  consequences: 
 --- !u!4 &1039786924
 Transform:
   m_ObjectHideFlags: 0

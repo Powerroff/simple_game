@@ -10,51 +10,65 @@ public class OptionTree
 
     }
 
-    public struct OptionNode //class vs struct?? idk
+    public class OptionNode //class vs struct?? idk
     {
-        public int layer;
-        public int[] children;
         public Option option;
+        public OptionTree tree;
 
-        public OptionNode(int layer, int[] children, Option option) {
-            this.layer = layer;
-            this.children = children;
+        OptionNode[] children;
+
+        public OptionNode(Option option, OptionTree tree) {
             this.option = option;
+            this.option.node = this;
+            this.tree = tree;
+            this.children = new OptionNode[3];
+        }
 
+        enum child { left, center, right };
+
+        public List<Option> getChildren() {
+            List<Option> childrenOpts = new List<Option>();
+            foreach (OptionNode n in children) 
+                if (n != null)
+                    childrenOpts.Add(n.option);
+            return childrenOpts;        
         }
         
+        public void setChildren(OptionNode[] children) {
+            if (children.Length != 3)
+                Debug.Log("Setting children to incorrect length: " + children.Length);
+            this.children = children;
+        }
     }
 
-    public List<OptionNode> getChildren(OptionNode n) {
-        
-        List<OptionNode> childrenList = new List<OptionNode>();
-        if (n.children != null)
-            foreach (int child in n.children) {
-                childrenList.Add(nodeTree[n.layer + 1][child]);
-            }
-        return childrenList;
-        
-    }
-
-    public List<OptionNode> getFirstLayer() {
-        List<OptionNode> l = new List<OptionNode>();
-        l.AddRange(nodeTree[0]);
+    //This will be refactored
+    public List<Option> getFirstLayer() { 
+        List<Option> l = new List<Option>();
+        l.AddRange(new Option[] { nodeTree[0][0].option, nodeTree[0][1].option });
         return l;
     }
 
     public static OptionTree defaultTree() {
         OptionTree ot = new OptionTree();
         ot.nodeTree = new OptionNode[][] { new OptionNode[2], new OptionNode[3], new OptionNode[5] };
-        ot.nodeTree[0][0] = new OptionNode(0, new int[] { 0, 1 }, Option.hackSlash());
-        ot.nodeTree[0][1] = new OptionNode(0, new int[] { 1, 2 }, Option.harvest());
-        ot.nodeTree[1][0] = new OptionNode(1, new int[] { 0, 1 }, Option.savageSlash());
-        ot.nodeTree[1][1] = new OptionNode(1, new int[] { 1, 2, 3 }, Option.clearPath());
-        ot.nodeTree[1][2] = new OptionNode(1, new int[] { 3, 4 }, Option.skilledExploration());
-        ot.nodeTree[2][0] = new OptionNode(2, null, Option.recklessAssault());
-        ot.nodeTree[2][1] = new OptionNode(2, null, Option.swiftKill());
-        ot.nodeTree[2][2] = new OptionNode(2, null, Option.layLand());
-        ot.nodeTree[2][3] = new OptionNode(2, null, Option.rangerTactics());
-        ot.nodeTree[2][4] = new OptionNode(2, null, Option.conquerWilderness());
+        ot.nodeTree[0][0] = new OptionNode(Option.hackSlash(), ot);
+        ot.nodeTree[0][1] = new OptionNode(Option.harvest(), ot);
+        ot.nodeTree[1][0] = new OptionNode(Option.savageSlash(), ot);
+        ot.nodeTree[1][1] = new OptionNode(Option.clearPath(), ot);
+        ot.nodeTree[1][2] = new OptionNode(Option.skilledExploration(), ot);
+        ot.nodeTree[2][0] = new OptionNode(Option.recklessAssault(), ot);
+        ot.nodeTree[2][1] = new OptionNode(Option.swiftKill(), ot);
+        ot.nodeTree[2][2] = new OptionNode(Option.layLand(), ot);
+        ot.nodeTree[2][3] = new OptionNode(Option.rangerTactics(), ot);
+        ot.nodeTree[2][4] = new OptionNode(Option.conquerWilderness(), ot);
+        //Setup Children
+        ot.nodeTree[0][0].setChildren(new OptionNode[] { ot.nodeTree[1][0], null, ot.nodeTree[1][1] });
+        ot.nodeTree[0][1].setChildren(new OptionNode[] { ot.nodeTree[1][1], null, ot.nodeTree[1][2] });
+        ot.nodeTree[1][0].setChildren(new OptionNode[] { ot.nodeTree[2][0], null, ot.nodeTree[2][1] });
+        ot.nodeTree[1][1].setChildren(new OptionNode[] { ot.nodeTree[2][1], ot.nodeTree[2][2], ot.nodeTree[2][3] });
+        ot.nodeTree[1][2].setChildren(new OptionNode[] { ot.nodeTree[2][3], null, ot.nodeTree[2][4] });
+
+
         return ot;
     }
 
