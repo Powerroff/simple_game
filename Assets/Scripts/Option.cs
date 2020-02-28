@@ -9,7 +9,7 @@ public class Option
     public GameManager gm;
 
     //Other variables
-    public string description;
+    public string description, shortened;
     public UnityAction onpress;  //Capitalization?
     public int rarity;
 
@@ -46,8 +46,6 @@ public class Option
     }
 
 
-
-
     // Prebuilt Options **********************
     
     /* Basic Option Tree
@@ -66,6 +64,7 @@ public class Option
 
         Option o = new Option();
         o.description = string.Format("Hack and Slash\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.shortened = "Hack n Slash";
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -81,6 +80,7 @@ public class Option
 
         Option o = new Option();
         o.description = string.Format("Harvest\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.shortened = "Harvest";
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -96,6 +96,7 @@ public class Option
 
         Option o = new Option();
         o.description = string.Format("Savage Slash\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.shortened = "Savage Slash";
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -111,6 +112,7 @@ public class Option
 
         Option o = new Option();
         o.description = string.Format("Clear a Path\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.shortened = "Clear a Path";
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -126,6 +128,7 @@ public class Option
 
         Option o = new Option();
         o.description = string.Format("Skilled Exploration\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.shortened = "Exploration";
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -141,6 +144,7 @@ public class Option
 
         Option o = new Option();
         o.description = string.Format("Reckless Assault\n\n{0} Damage to monsters\n Spend {1} extra stamina", monsterDmg, stamLoss);
+        o.shortened = "Assault";
         o.setupStats(-monsterDmg, 0, 0, -stamLoss);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -156,6 +160,7 @@ public class Option
 
         Option o = new Option();
         o.description = string.Format("Swift Kill\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.shortened = "Swift Kill";
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -171,6 +176,7 @@ public class Option
 
         Option o = new Option();
         o.description = string.Format("Lay of the Land\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.shortened = "Lay of the Land";
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
         o.rewards = new Option[] { treatWounds(), takeShelter(), investigateSurroundings() };
@@ -186,6 +192,7 @@ public class Option
 
         Option o = new Option();
         o.description = string.Format("Ranger Tactics\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.shortened = "Ranger Tactics";
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -201,6 +208,7 @@ public class Option
 
         Option o = new Option();
         o.description = string.Format("Conquer the Wilderness\n\n{0} Damage to nature\n Spend {1} extra stamina", natureDmg, stamLoss);
+        o.shortened = "Conquer";
         o.setupStats(0, -natureDmg, 0, -stamLoss);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };

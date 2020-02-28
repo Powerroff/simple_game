@@ -26,7 +26,7 @@ public class OptSelectManager : MonoBehaviour
 
     public static Dropdown.OptionData datify(OptionTree.OptionNode n) {
         Dropdown.OptionData data = new Dropdown.OptionData();
-        data.text = n.option.description; //HM
+        data.text = n.option.shortened; //HM
         return data;
     }
 
