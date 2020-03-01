@@ -12,6 +12,7 @@ public class Option
     public string description, shortened;
     public UnityAction onpress;  //Capitalization?
     public int rarity;
+    public Conduit conduit;
 
     public OptionTree.OptionNode node;
 
@@ -70,6 +71,8 @@ public class Option
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.5f };
 
+        o.conduit = new Conduit.Generator(o, Conduit.newConnectors((int)Conduit.powerColors.red, (int)Conduit.powerColors.red, (int)Conduit.powerColors.red), (int)Conduit.powerColors.red);
+
         return o;
     }
 
@@ -86,6 +89,8 @@ public class Option
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.75f };
 
+        o.conduit = new Conduit.Generator(o, Conduit.newConnectors((int)Conduit.powerColors.green, (int)Conduit.powerColors.green, (int)Conduit.powerColors.green), (int)Conduit.powerColors.green);
+
         return o;
     }
 
@@ -101,6 +106,8 @@ public class Option
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.5f };
+        
+        o.conduit = new Conduit(o, Conduit.newConnectors(-1, -1, (int)Conduit.powerColors.red), Conduit.newConnectors((int)Conduit.powerColors.red, (int)Conduit.powerColors.red, (int)Conduit.powerColors.red));
 
         return o;
     }
