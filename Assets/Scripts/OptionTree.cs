@@ -10,6 +10,7 @@ public class OptionTree
 
     }
 
+
     public class OptionNode //class vs struct?? idk
     {
         public Option option;
