@@ -5,8 +5,19 @@ using UnityEngine;
 public class Conduit
 {
     public bool activated;
+    int _reinforcement = 0;
+    public int reinforcement {
+        get {
+            return _reinforcement;
+        }
+        set {
+            if (value < 0) _reinforcement = 0;
+            else if (value > 5) _reinforcement = 5;
+            else _reinforcement = value;
+        }
+    }
 
-    int[] incomingPower;
+    public int[] incomingPower;
     bool[] activePowers;
 
     Option option;
@@ -38,7 +49,7 @@ public class Conduit
         this.option = option;
         this.inputs = inputs;
         this.outputs = outputs; //3 directions right now, may rework later
-        incomingPower = new int[3];
+        incomingPower = new int[] { -1, -1, -1 };
         activePowers = new bool[numColors];
         activated = false;
     }
@@ -60,11 +71,12 @@ public class Conduit
     }
 
     protected virtual bool[] getOutputs() {
-        //processInputs();
+        processInputs();
         return activePowers;
     }
 
     public int getOutput(int dir) { //returns color of output in given direction
+        if (reinforcement < 5) return -1;
         bool[] outputColors = getOutputs();
         for (int color = numColors - 1; color >= 0; color--) //Priority for colors in reverse order (??)
             if (outputs[dir] != null && (outputColors[color] && outputs[dir].accepts(color)))
@@ -75,30 +87,6 @@ public class Conduit
 
     // Useful connectors --------------------
 
-    public static connector red_connector() {
-        bool[] accept = new bool[numColors];
-        accept[(int)powerColors.red] = true;
-        return new connector(accept);
-    }
-
-    public static connector green_connector() {
-        bool[] accept = new bool[numColors];
-        accept[(int)powerColors.red] = true;
-        return new connector(accept);
-    }
-
-    public static connector yellow_connector() {
-        bool[] accept = new bool[numColors];
-        accept[(int)powerColors.red] = true;
-        return new connector(accept);
-    }
-
-    public static connector all_connector() {
-        bool[] accept = new bool[numColors];
-        for (int i = 0; i < numColors; i++)
-            accept[i] = true;
-        return new connector(accept);
-    }
 
     public static connector[] newConnectors(int left_color, int center_color, int right_color) {
         int[] colors = new int[] { left_color, center_color, right_color };
@@ -124,7 +112,7 @@ public class Conduit
         }
 
         protected override bool[] getOutputs() {
-            //processInputs();
+            processInputs();
             bool[] outputColors = new bool[numColors];
             outputColors[color] = true;
             return outputColors;
@@ -141,8 +129,15 @@ public class Conduit
             this.requirements = requirements;
         }
 
+        public Reactor(Option option, connector[] inputs, connector[] outputs, int color, int[] requirements) : base(option, inputs, outputs) {
+            this.color = color;
+            this.requirements = new bool[numColors];
+            foreach (int i in requirements)
+                this.requirements[i] = true;
+        }
+
         protected override bool[] getOutputs() {
-            //processInputs();
+            processInputs();
             bool[] outputColors = new bool[numColors];
             for (int c = 0; c < numColors; c++)
                 if (requirements[c] && !activePowers[c]) //Returns no power unless all requirements are met

@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour
         room.options = new List<Option>();
         foreach (Option option in selected) {
             if (room.obstacle.health > 0) {
-                room.options.AddRange(option.getChildren());
+                room.options.AddRange(option.getChildrenList());
             } else {
                 room.options.AddRange(option.randomRewards());
                 }

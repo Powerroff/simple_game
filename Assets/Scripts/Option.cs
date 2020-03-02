@@ -19,12 +19,16 @@ public class Option
     Option[] rewards;
     float[] rewardProbs;
 
-    public List<Option> getChildren() {
+    Option[] getChildren() {
         return node.getChildren();
     }
 
+    public List<Option> getChildrenList() {
+        return node.getChildrenList();
+    }
+
     public Option() {
-        onpress = (() => {; });
+        onpress = (() => {reinforce(true); });
         gm = GameManager.instance;
         rarity = 0;
         rewards = new Option[0] { };
@@ -44,6 +48,18 @@ public class Option
                 onKill.Add(rewards[i]);
         }
         return onKill;
+    }
+
+    public void reinforce(bool selected) {
+        if (conduit == null) return;
+        if (selected) conduit.reinforcement++;
+        else conduit.reinforcement--;
+
+        for (int i = 0; i < 3; i++)
+            if (getChildren()[i] != null)
+                getChildren()[i].conduit.incomingPower[2 - i] = conduit.getOutput(i); //Some redundancy here with multiple function calls.
+            
+        
     }
 
 
@@ -71,7 +87,9 @@ public class Option
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.5f };
 
-        o.conduit = new Conduit.Generator(o, Conduit.newConnectors((int)Conduit.powerColors.red, (int)Conduit.powerColors.red, (int)Conduit.powerColors.red), (int)Conduit.powerColors.red);
+        Conduit.connector[] bottomConnections = Conduit.newConnectors((int)Conduit.powerColors.red, (int)Conduit.powerColors.red, (int)Conduit.powerColors.red);
+        int powerColor = (int)Conduit.powerColors.red;
+        o.conduit = new Conduit.Generator(o, bottomConnections, powerColor);
 
         return o;
     }
@@ -89,7 +107,9 @@ public class Option
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.75f };
 
-        o.conduit = new Conduit.Generator(o, Conduit.newConnectors((int)Conduit.powerColors.green, (int)Conduit.powerColors.green, (int)Conduit.powerColors.green), (int)Conduit.powerColors.green);
+        Conduit.connector[] bottomConnections = Conduit.newConnectors((int)Conduit.powerColors.green, (int)Conduit.powerColors.green, (int)Conduit.powerColors.green);
+        int powerColor = (int)Conduit.powerColors.green;
+        o.conduit = new Conduit.Generator(o, bottomConnections, powerColor);
 
         return o;
     }
@@ -106,8 +126,10 @@ public class Option
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.5f };
-        
-        o.conduit = new Conduit(o, Conduit.newConnectors(-1, -1, (int)Conduit.powerColors.red), Conduit.newConnectors((int)Conduit.powerColors.red, (int)Conduit.powerColors.red, (int)Conduit.powerColors.red));
+
+        Conduit.connector[] topConnections = Conduit.newConnectors(-1, -1, (int)Conduit.powerColors.red);
+        Conduit.connector[] bottomConnections = Conduit.newConnectors((int)Conduit.powerColors.red, (int)Conduit.powerColors.red, (int)Conduit.powerColors.red);
+        o.conduit = new Conduit(o, topConnections, bottomConnections);
 
         return o;
     }
@@ -125,6 +147,13 @@ public class Option
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.75f };
 
+        //init conduit
+        Conduit.connector[] topConnections = Conduit.newConnectors((int)Conduit.powerColors.rainbow, (int)Conduit.powerColors.rainbow, (int)Conduit.powerColors.rainbow);
+        Conduit.connector[] bottomConnections = Conduit.newConnectors(-1, (int)Conduit.powerColors.yellow, -1);
+        int outputColor = (int)Conduit.powerColors.yellow;
+        int[] requriedInputs = new int[] { (int)Conduit.powerColors.red, (int)Conduit.powerColors.green };
+        o.conduit = new Conduit.Reactor(o, topConnections, bottomConnections, outputColor, requriedInputs);
+
         return o;
     }
 
@@ -140,6 +169,10 @@ public class Option
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.75f };
+
+        Conduit.connector[] topConnections = Conduit.newConnectors((int)Conduit.powerColors.green, -1, -1);
+        Conduit.connector[] bottomConnections = Conduit.newConnectors((int)Conduit.powerColors.green, (int)Conduit.powerColors.green, (int)Conduit.powerColors.green);
+        o.conduit = new Conduit(o, topConnections, bottomConnections);
 
         return o;
     }
@@ -157,6 +190,10 @@ public class Option
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.25f };
 
+        Conduit.connector[] topConnections = Conduit.newConnectors(-1, -1, (int)Conduit.powerColors.red);
+        Conduit.connector[] bottomConnections = new Conduit.connector[3];
+        o.conduit = new Conduit(o, topConnections, bottomConnections);
+
         return o;
     }
 
@@ -172,6 +209,10 @@ public class Option
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.5f };
+
+        Conduit.connector[] topConnections = Conduit.newConnectors((int)Conduit.powerColors.red, -1, -1);
+        Conduit.connector[] bottomConnections = new Conduit.connector[3];
+        o.conduit = new Conduit(o, topConnections, bottomConnections);
 
         return o;
     }
@@ -189,6 +230,10 @@ public class Option
         o.rewards = new Option[] { treatWounds(), takeShelter(), investigateSurroundings() };
         o.rewardProbs = new float[] { 0.75f, 0.75f, .25f };
 
+        Conduit.connector[] topConnections = Conduit.newConnectors(-1, (int)Conduit.powerColors.yellow, -1);
+        Conduit.connector[] bottomConnections = new Conduit.connector[3];
+        o.conduit = new Conduit(o, topConnections, bottomConnections);
+
         return o;
     }
 
@@ -204,6 +249,10 @@ public class Option
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.75f };
+        Conduit.connector[] topConnections = Conduit.newConnectors(-1, -1, (int)Conduit.powerColors.green);
+        Conduit.connector[] bottomConnections = new Conduit.connector[3];
+        o.conduit = new Conduit(o, topConnections, bottomConnections);
+ 
 
         return o;
     }
@@ -220,6 +269,10 @@ public class Option
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.25f, 0.75f };
+
+        Conduit.connector[] topConnections = Conduit.newConnectors((int)Conduit.powerColors.green, -1, -1);
+        Conduit.connector[] bottomConnections = new Conduit.connector[3];
+        o.conduit = new Conduit(o, topConnections, bottomConnections);
 
         return o;
     }
@@ -271,7 +324,7 @@ public class Option
 
         o.rewards = new Option[] { treatWounds(), takeShelter(), investigateSurroundings() };
         o.rewardProbs = new float[] { 0.75f, 0.75f,  1f };
-        o.setupStats(1, 1, 0, 0);
+        o.setupStats(-monsterDmg, -natureDmg, 0, 0);
         o.rarity = 1;
         return o;
     }

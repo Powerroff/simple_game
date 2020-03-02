@@ -27,15 +27,23 @@ public class OptionTree
 
         enum child { left, center, right };
 
-        public List<Option> getChildren() {
-            List<Option> childrenOpts = new List<Option>();
-            foreach (OptionNode n in children) 
-                if (n != null)
-                    childrenOpts.Add(n.option);
+        public Option[] getChildren() {
+            Option[] childrenOpts = new Option[3];
+            for (int i = 0; i < 3; i++)
+                if (children[i] != null)
+                    childrenOpts[i] = children[i].option;
             return childrenOpts;        
         }
-        
-        public void setChildren(OptionNode[] children) {
+
+        public List<Option> getChildrenList() {
+            List<Option> childrenOpts = new List<Option>();
+            foreach (OptionNode n in children)
+                if (n != null)
+                    childrenOpts.Add(n.option);
+            return childrenOpts;
+        }
+
+            public void setChildren(OptionNode[] children) {
             if (children.Length != 3)
                 Debug.Log("Setting children to incorrect length: " + children.Length);
             this.children = children;
