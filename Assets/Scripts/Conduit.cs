@@ -85,6 +85,13 @@ public class Conduit
 
     }
 
+    public virtual bool isPowered() {
+        processInputs();
+        foreach (bool b in activePowers)
+            if (b) return true;
+        return false;
+    }
+
     // Useful connectors --------------------
 
 
@@ -117,6 +124,10 @@ public class Conduit
             outputColors[color] = true;
             return outputColors;
         }
+
+        public override bool isPowered() {
+            return (reinforcement == 5);
+        }
     }
 
     public class Reactor : Conduit
@@ -139,12 +150,16 @@ public class Conduit
         protected override bool[] getOutputs() {
             processInputs();
             bool[] outputColors = new bool[numColors];
-            for (int c = 0; c < numColors; c++)
-                if (requirements[c] && !activePowers[c]) //Returns no power unless all requirements are met
-                    return outputColors;
-            
-            outputColors[color] = true;
+            if (isPowered())
+                outputColors[color] = true;
             return outputColors;
+        }
+
+        public override bool isPowered() {
+            for (int c = 0; c < numColors; c++)
+                if (requirements[c] && !activePowers[c])
+                    return false;
+            return true;
         }
     }
 
