@@ -17,7 +17,7 @@ public class Obstacle
     //These variables will be specific to the obstacle
     public int health;
     public ObstacleClass obstacleClass;
-    public UnityAction unCleared, cleared;
+    public Action unCleared, cleared;
     public string name, description;
     public Option uniqueOption;
 
@@ -37,7 +37,7 @@ public class Obstacle
         return "";
     } */
 
-    public UnityAction changeHp(int amount) {
+    public Action changeHp(int amount) {
         return (() => { health = Math.Max(health + amount, 0); });
     }
 

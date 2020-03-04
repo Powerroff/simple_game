@@ -2,16 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using System;
 
 public class FlagManager
 {
-
+    //Want to make these event actions but w/e 
     public List<Flag> onGenerateOption;
     public List<Flag> onProcessOption;
     public List<Flag> onNewRoom;
-    public Option option = null;
 
-    List<Flag> toPurge;
+    public Option currentlyGenerating, currentlyEvaluating;
+
+
+    public class Flag
+    {
+        static int flagid = 0;
+
+        public int id;
+        public event Action todo;
+        public bool toDelete;
+        /*
+        public Flag(Action todo) {
+            id = flagid++; // yeet
+            this.todo = todo;
+        }
+        */
+
+        public Flag() {
+            id = flagid++; // yeet
+            //Debug.Log("Created Flag " + id);
+            toDelete = false;
+        }
+
+        public void invoke() {
+            if (!toDelete && todo != null) todo();
+        }
+
+
+
+    }
+
 
     public FlagManager() {
         onGenerateOption = new List<Flag>();
@@ -19,63 +49,52 @@ public class FlagManager
         onNewRoom = new List<Flag>();
     }
 
-
-    public void evaluate(List<Flag> list) {
-        toPurge = new List<Flag>();
-        foreach (Flag flag in list)
-            flag.invoke();
-        foreach (Flag flag in toPurge) list.Remove(flag);
-        toPurge = new List<Flag>();
+    public void invoke(List<Flag> list) {
+        list.RemoveAll(flag => flag.toDelete); //Crazy syntax
+        for (int i = 0; i < list.Count; i++) { //Not using foreach because we may alter list during processing
+            if (list[i] != null) {
+                //Debug.Log("Action " + list[i].id);
+                list[i].invoke();
+            }
+        }
+    
     }
 
-    //Adds a flag to a room and returns its destruction flag
-    public Flag addForRoom(Flag flag, List<Flag> list) {
-        list.Add(flag);
-
-        Flag destroyFlag = destroyOnNewRoom();
-        destroyFlag.addAction(() => toPurge.Add(flag));
-
-        return destroyFlag;
-        
+    public int findById(List<Flag> list, int id) {
+        return list.FindIndex(flag => flag.id == id); //More syntax
     }
 
-    public class Flag
-    {
-        UnityAction todo;
-
-        public Flag() {
-            todo = () => {; };
-        }
-
-        public Flag(UnityAction action) {
-            todo = action;
-        }
-
-            public void addAction(UnityAction toAdd) {
-            todo += toAdd;
-        }
-
-        public void invoke() {
-            todo();
-        }
+    public void destroyById(List<Flag> list, int id) {
+        int ind = findById(list, id);
+        if (ind >= 0) list[ind].toDelete = true;
+        //Debug.Log("Destroyed Flag " + id);
     }
 
 
 
 
+    //Useful flag creation methods. Using these will hopefully prevent memory leaks caused by buildup of uncleared flags **********
 
-    //Useful flags + actions
-    /*
-    UnityAction removeFlag(Flag flag, List<Flag> list) {
-        return () => { list.Remove(flag); };
+    //Creates a flag that lasts for one room
+    public Flag oneRoomFlag(List<Flag> list) {
+        Flag destroy;
+        return oneRoomFlag(list, out destroy);
     }
-    */
 
-    Flag destroyOnNewRoom() {
-        Flag flag = new Flag(); 
-        flag.addAction( () => { toPurge.Add(flag); });
-        onNewRoom.Add(flag);
+    //Creates a flag to last for one room, also giving access to destruction flag
+    public Flag oneRoomFlag(List<Flag> list, out Flag destroy) {
+        Flag flag = new Flag();
+        destroy = new Flag();
+        int id = destroy.id;
+        destroy.todo += () => destroyById(list, flag.id);
+        destroy.todo += () => destroyById(onNewRoom, id);
+
+        onProcessOption.Add(flag);
+        onNewRoom.Add(destroy);
+
         return flag;
     }
+
+
 
 }

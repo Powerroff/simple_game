@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
             if (room.relic != null) room.relic.onPickup.Invoke();
 
             //Process Flags
-            fm.evaluate(fm.onNewRoom);
+            fm.invoke(fm.onNewRoom);
         }
 
         Room tempRoom = gameObject.AddComponent<Room>() as Room;
@@ -139,11 +139,11 @@ public class GameManager : MonoBehaviour
         List<Option> selected = new List<Option>();
         for (int i = 0; i < room.options.Count; i++) {
             if (uim.opm.optionsSelected[i]) {
-                fm.option = room.options[i];
-                fm.evaluate(fm.onProcessOption);
+                fm.currentlyEvaluating = room.options[i];
+                fm.invoke(fm.onProcessOption);
                 room.options[i].onPress();
                 selected.Add(room.options[i]);
-            }
+            } else room.options[i].reinforce(false);
         }
         player.stats.stamina -= System.Math.Max(selected.Count - 1, 0);
         return selected;

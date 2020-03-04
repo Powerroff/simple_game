@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class Conduit
 {
-    public bool activated;
     int _reinforcement = 0;
+    public int max_reinforcement = 2; //Eventually make this a property of the option?
     public int reinforcement {
         get {
             return _reinforcement;
         }
         set {
-            if (value < 0) _reinforcement = 0;
-            else if (value > 5) _reinforcement = 5;
-            else _reinforcement = value;
+            if (value < 0) _reinforcement = 0;                                      //Min is 0
+            else if (value > max_reinforcement) _reinforcement = max_reinforcement; //Upper bound
+            else if (_reinforcement < max_reinforcement) _reinforcement = value;    //Otherwise change unless at max
         }
     }
 
@@ -39,7 +39,7 @@ public class Conduit
         }
 
         public bool accepts(int color) {
-            return color != -1 && acceptedColors[color];
+            return color != -1 && (acceptedColors[color] || acceptedColors[(int)powerColors.rainbow]);
         }
 
 
@@ -51,7 +51,6 @@ public class Conduit
         this.outputs = outputs; //3 directions right now, may rework later
         incomingPower = new int[] { -1, -1, -1 };
         activePowers = new bool[numColors];
-        activated = false;
     }
 
     public void setInput(int dir, bool[] acceptedColors) {
@@ -66,7 +65,7 @@ public class Conduit
         activePowers = new bool[numColors];
         for (int i = 0; i < 3; i++) {
             if (inputs[i] != null && inputs[i].accepts(incomingPower[i]))
-                activePowers[(int)incomingPower[i]] = true;
+                activePowers[(int)incomingPower[i]] = true; //rework for rainbow inputs at some point
         }
     }
 
@@ -76,20 +75,29 @@ public class Conduit
     }
 
     public int getOutput(int dir) { //returns color of output in given direction
-        if (reinforcement < 5) return -1;
+        if (reinforcement < max_reinforcement) return -1;
         bool[] outputColors = getOutputs();
         for (int color = numColors - 1; color >= 0; color--) //Priority for colors in reverse order (??)
-            if (outputs[dir] != null && (outputColors[color] && outputs[dir].accepts(color)))
+            if (outputs[dir] != null && (outputColors[color] && outputs[dir].accepts(color))) 
                 return color;
+            
         return -1;
 
     }
 
-    public virtual bool isPowered() {
+    public virtual bool isReceivingPower() {
         processInputs();
         foreach (bool b in activePowers)
             if (b) return true;
         return false;
+    }
+
+    public bool isPowered() {
+        return (isReceivingPower() && reinforcement == max_reinforcement);
+    }
+
+    public virtual void resetPower() {
+        _reinforcement = 0;
     }
 
     // Useful connectors --------------------
@@ -119,16 +127,21 @@ public class Conduit
         }
 
         protected override bool[] getOutputs() {
-            processInputs();
             bool[] outputColors = new bool[numColors];
             outputColors[color] = true;
             return outputColors;
         }
 
-        public override bool isPowered() {
-            return (reinforcement == 5);
+        //Generator never requires power input.
+        public override bool isReceivingPower() {
+            return true;
+        }
+
+        public override void resetPower() {
+            return; //Cannot be unpowered once powered!
         }
     }
+
 
     public class Reactor : Conduit
     {
@@ -155,10 +168,13 @@ public class Conduit
             return outputColors;
         }
 
-        public override bool isPowered() {
+        public override bool isReceivingPower() {
+            processInputs();
+            if (activePowers[(int)powerColors.rainbow]) return true; //hm
             for (int c = 0; c < numColors; c++)
-                if (requirements[c] && !activePowers[c])
+                if (requirements[c] && !activePowers[c]) {
                     return false;
+                }
             return true;
         }
     }

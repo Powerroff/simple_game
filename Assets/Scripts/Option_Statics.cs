@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -31,14 +32,15 @@ public partial class Option
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
         //Powered Action
-        FlagManager.Flag bonusDmgAction = new FlagManager.Flag();
-        FlagManager.Flag destroyFlag = GameManager.instance.fm.addForRoom(bonusDmgAction, GameManager.instance.fm.onProcessOption);
-        bonusDmgAction.addAction( () => {
-            if (!GameManager.instance.fm.option.isPowered()) {
-                GameManager.instance.room.obstacle.assignDamage(bonusDmg, bonusDmg);
-                destroyFlag.invoke();
-            }
-        });
+        o.onPoweredPress += () => {  //Would like this to 
+            FlagManager.Flag bonusDmgFlag = o.fm.oneRoomFlag(o.fm.onProcessOption);
+            bonusDmgFlag.todo += () => { 
+                if (!o.fm.currentlyEvaluating.isPowered()) {
+                    o.gm.room.obstacle.assignDamage(-bonusDmg, -bonusDmg);
+                    bonusDmgFlag.toDelete = true; //Done with this flag. The destroy flag cleans itself up.
+                }
+            };
+        };
          
         //Rewards
         o.rewards = new Option[] { treatWounds(), takeShelter() };
