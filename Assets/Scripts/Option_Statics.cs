@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public partial class Option
 {
@@ -19,15 +20,31 @@ public partial class Option
     public static Option hackSlash() {
         int monsterDmg = 2;
         int natureDmg = 1;
+        int bonusDmg = 2;
 
         Option o = new Option();
         o.description = string.Format("Hack and Slash\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.descriptionPow = string.Format("Hack and Slash (Powered)\n\n{0} Damage to monsters\n {1} damage to nature\n Your next unpowered attack this room does {2} more damage", monsterDmg, natureDmg, bonusDmg) ;
         o.shortened = "Hack n Slash";
+
+        //Base Action
         o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
+        //Powered Action
+        FlagManager.Flag bonusDmgAction = new FlagManager.Flag();
+        FlagManager.Flag destroyFlag = GameManager.instance.fm.addForRoom(bonusDmgAction, GameManager.instance.fm.onProcessOption);
+        bonusDmgAction.addAction( () => {
+            if (!GameManager.instance.fm.option.isPowered()) {
+                GameManager.instance.room.obstacle.assignDamage(bonusDmg, bonusDmg);
+                destroyFlag.invoke();
+            }
+        });
+         
+        //Rewards
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.5f };
 
+        //Conduit
         Conduit.connector[] bottomConnections = Conduit.newConnectors((int)Conduit.powerColors.red, (int)Conduit.powerColors.red, (int)Conduit.powerColors.red);
         int powerColor = (int)Conduit.powerColors.red;
         o.conduit = new Conduit.Generator(o, bottomConnections, powerColor);

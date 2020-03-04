@@ -88,11 +88,9 @@ public class OptionPanelManager : MonoBehaviour
             optionButtons[i] = new OptionWrapper(g.GetComponent<Button>(), g.GetComponentInChildren<Text>(), g.transform.Find("OptionIndicator").GetComponent<Image>());
 
             optionButtons[i].setState(false);
-            foreach (Option o in options)
-                Debug.Log(o);
             string reinfStr = "";
             if(options[i].conduit != null) reinfStr = "\n\n Reinforcement " + options[i].conduit.reinforcement;
-            optionButtons[i].setText(options[i].description + reinfStr);
+            optionButtons[i].setText(options[i].getDescription() + reinfStr);
             optionButtons[i].setColor(options[i].rarity);
 
             optionsSelected[i] = false;

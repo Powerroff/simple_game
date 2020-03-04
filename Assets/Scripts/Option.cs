@@ -9,11 +9,11 @@ public partial class Option
     public GameManager gm;
 
     //Other variables
-    public string description, shortened;
+    public string description, descriptionPow, shortened;
     public UnityAction onpress;  //Capitalization?
+    public UnityAction onPoweredPress;
     public int rarity;
     public Conduit conduit;
-
     public OptionTree.OptionNode node;
 
     Option[] rewards;
@@ -29,7 +29,8 @@ public partial class Option
     }
 
     public Option() {
-        onpress = (() => {reinforce(true); });
+        onpress = (() => {reinforce(true);});
+        onPoweredPress = () => {; };
         gm = GameManager.instance;
         rarity = 0;
         rewards = new Option[0] { };
@@ -37,9 +38,19 @@ public partial class Option
 
     //Lazy evaluation so that option tree can be static even when room is updating
     //Makes use of { get; set; } syntax in GameManager to have implicit get and set functions rather than accessing properties
+
+    /* Can't add to actions through a pointer?? Unclear
+    void setupStats(UnityAction action, int monsterDmg, int natureDmg, int hpChange, int stamChange) {
+        action += () => { gm.player.updateStats(hpChange, stamChange); };
+        action += () => { gm.room.obstacle.assignDamage(monsterDmg, natureDmg); };
+    }
+    */
+
     void setupStats(int monsterDmg, int natureDmg, int hpChange, int stamChange) {
-        onpress += () => gm.player.updateStats(hpChange,  stamChange);
-        onpress += () => gm.room.obstacle.assignDamage(monsterDmg, natureDmg);
+        onpress += () => { gm.player.updateStats(hpChange, stamChange); };
+        onpress += () => { gm.room.obstacle.assignDamage(monsterDmg, natureDmg); };
+        onPoweredPress += () => { gm.player.updateStats(hpChange, stamChange); };
+        onPoweredPress += () => { gm.room.obstacle.assignDamage(monsterDmg, natureDmg); };
     }
 
     public List<Option> randomRewards() {
@@ -63,7 +74,21 @@ public partial class Option
         
     }
 
+    bool isPowered() {
+        if (conduit != null)
+            return conduit.isPowered(); //Uhh is this what I want?
+        return false;
+    }
 
+    public string getDescription() {
+        if (isPowered() && descriptionPow != null) return descriptionPow;
+        else return description;
+    }
+
+    public void onPress() {
+        if (!isPowered()) onpress();
+        else onPoweredPress();
+    }
     
 
      

@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
             Debug.Log("Instantiating gm");
             //if not, set instance to this
             instance = this;
+
+            fm = new FlagManager(); //Make a component maybe? Also don't want this here.
         }
 
         //If instance already exists and it's not this:
@@ -34,6 +36,7 @@ public class GameManager : MonoBehaviour
 
     public Room room { get; set; }
     public UIManager uim { get; set; }
+    public FlagManager fm { get; set; }
     public Player player { get; set; }
     public int roomCount { get; set; }
     public bool[] optionsSelected { get; set; }
@@ -65,6 +68,9 @@ public class GameManager : MonoBehaviour
 
             //Pickup relic
             if (room.relic != null) room.relic.onPickup.Invoke();
+
+            //Process Flags
+            fm.evaluate(fm.onNewRoom);
         }
 
         Room tempRoom = gameObject.AddComponent<Room>() as Room;
@@ -133,7 +139,9 @@ public class GameManager : MonoBehaviour
         List<Option> selected = new List<Option>();
         for (int i = 0; i < room.options.Count; i++) {
             if (uim.opm.optionsSelected[i]) {
-                room.options[i].onpress();
+                fm.option = room.options[i];
+                fm.evaluate(fm.onProcessOption);
+                room.options[i].onPress();
                 selected.Add(room.options[i]);
             }
         }
