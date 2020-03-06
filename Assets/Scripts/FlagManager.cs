@@ -11,7 +11,8 @@ public class FlagManager
     public List<Flag> onProcessOption;
     public List<Flag> onNewRoom;
 
-    public Option currentlyGenerating, currentlyEvaluating;
+    public Option currentlyGenerating { get; set; }
+    public Option currentlyEvaluating { get; set; }
 
 
     public class Flag
@@ -67,7 +68,7 @@ public class FlagManager
     public void destroyById(List<Flag> list, int id) {
         int ind = findById(list, id);
         if (ind >= 0) list[ind].toDelete = true;
-        //Debug.Log("Destroyed Flag " + id);
+        Debug.Log("Destroyed Flag " + id);
     }
 
 
@@ -92,6 +93,21 @@ public class FlagManager
         onProcessOption.Add(flag);
         onNewRoom.Add(destroy);
 
+        return flag;
+    }
+
+    //Maybe would rather have modification action work on the consequence rather than the option?
+    public Flag modifyNextOptionIf(Predicate<Option> match, Action<Option> modification, bool single_use) {
+        Flag flag = oneRoomFlag(onProcessOption);
+        Debug.Log("Made Modification Flag " + flag.id);
+        flag.todo += () => {
+            if (match(currentlyEvaluating)) {
+                Debug.Log("Action " + flag.id);
+                modification(currentlyEvaluating);
+                Debug.Log(currentlyEvaluating.consequence.monsterDmg);
+                if (single_use) flag.toDelete = true;
+            }
+        };
         return flag;
     }
 

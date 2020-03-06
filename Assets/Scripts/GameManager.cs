@@ -90,6 +90,7 @@ public class GameManager : MonoBehaviour
 
         //Generate Options
         room.options = player.optionTree.getFirstLayer();
+        initOptionCons();
 
         //Generate Background Color
         room.backgroundColor = Random.ColorHSV(0f, .5f, .5f, .5f, 0.5f, 1f);  // I've limited the background colors to the lighter half of the spectrum.
@@ -135,7 +136,6 @@ public class GameManager : MonoBehaviour
 
 
     public List<Option> processOption() {
-        player.stats.stamina--;
         List<Option> selected = new List<Option>();
         for (int i = 0; i < room.options.Count; i++) {
             if (uim.opm.optionsSelected[i]) {
@@ -143,7 +143,8 @@ public class GameManager : MonoBehaviour
                 fm.invoke(fm.onProcessOption);
                 room.options[i].onPress();
                 selected.Add(room.options[i]);
-            } else room.options[i].reinforce(false);
+            }
+            room.options[i].reinforce(uim.opm.optionsSelected[i]);
         }
         player.stats.stamina -= System.Math.Max(selected.Count - 1, 0);
         return selected;
@@ -159,6 +160,7 @@ public class GameManager : MonoBehaviour
                 }
                 
             }
+        initOptionCons();
         if (room.options.Count > 0 && room.obstacle.uniqueOption != null) 
             room.options.Add(room.obstacle.uniqueOption);
             
@@ -172,6 +174,14 @@ public class GameManager : MonoBehaviour
             } else {
                 room.obstacle.cleared.Invoke();
             }
+    }
+
+    void initOptionCons() {
+        foreach (Option option in room.options) {
+            option.generateConsequence();
+            fm.currentlyGenerating = option;
+            fm.invoke(fm.onGenerateOption);
+        }
     }
 
 

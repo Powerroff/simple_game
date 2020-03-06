@@ -12,7 +12,7 @@ public partial class Option
 
     //Other variables
     public string description, descriptionPow, shortened;
-    public Action onpress, onPoweredPress; //Capitalization?
+    public Consequence defaultCons, powerCons, consequence;
     public int rarity;
     public Conduit conduit;
     public OptionTree.OptionNode node;
@@ -30,26 +30,12 @@ public partial class Option
     }
 
     public Option() {
-        onpress = (() => {if (isReceivingPower()) reinforce(true);});
-        onPoweredPress = () => {; };
         gm = GameManager.instance;
         fm = gm.fm;
         rarity = 0;
         rewards = new Option[0] { };
     }
 
-    //Lazy evaluation so that option tree can be static even when room is updating
-    //Makes use of { get; set; } syntax in GameManager to have implicit get and set functions rather than accessing properties
-
-    void setupStats(ref Action action, int monsterDmg, int natureDmg, int hpChange, int stamChange) {
-        action += () => { gm.player.updateStats(hpChange, stamChange); };
-        action += () => { gm.room.obstacle.assignDamage(monsterDmg, natureDmg); };
-    }
-
-    void setupStats(int monsterDmg, int natureDmg, int hpChange, int stamChange) {
-        setupStats(ref onpress, monsterDmg, natureDmg, hpChange, stamChange);
-        setupStats(ref onPoweredPress, monsterDmg, natureDmg, hpChange, stamChange);
-    }
 
     public List<Option> randomRewards() {
         List<Option> onKill = new List<Option>();
@@ -62,7 +48,7 @@ public partial class Option
 
     public void reinforce(bool selected) {
         if (conduit == null) return;
-        if (!selected) conduit.reinforcement--;
+        if (!selected || !isReceivingPower()) conduit.reinforcement--; //What to do if not receiving power?
         else {
             if (conduit.reinforcement == conduit.max_reinforcement - 1) 
                 foreach (Option option in gm.room.options)
@@ -95,10 +81,12 @@ public partial class Option
     }
 
     public void onPress() {
-        if (!isPowered()) onpress();
-        else onPoweredPress();
+        consequence.evaluate();
     }
     
+    public void generateConsequence() {
+        consequence = isPowered() ? powerCons.clone() : defaultCons.clone(); // Yee ternary operator
+    }
 
      
 

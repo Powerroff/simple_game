@@ -29,18 +29,11 @@ public partial class Option
         o.shortened = "Hack n Slash";
 
         //Base Action
-        o.setupStats(-monsterDmg, -natureDmg, 0, 0);
+        o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
 
         //Powered Action
-        o.onPoweredPress += () => {  //Would like this to 
-            FlagManager.Flag bonusDmgFlag = o.fm.oneRoomFlag(o.fm.onProcessOption);
-            bonusDmgFlag.todo += () => { 
-                if (!o.fm.currentlyEvaluating.isPowered()) {
-                    o.gm.room.obstacle.assignDamage(-bonusDmg, -bonusDmg);
-                    bonusDmgFlag.toDelete = true; //Done with this flag. The destroy flag cleans itself up.
-                }
-            };
-        };
+        o.powerCons = o.defaultCons.clone();
+        o.powerCons.specialAction += () => o.fm.modifyNextOptionIf(opt => !opt.isPowered(), opt => { opt.consequence.monsterDmg -= 2; opt.consequence.natureDmg -= 2; }, true);
          
         //Rewards
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -62,7 +55,12 @@ public partial class Option
         Option o = new Option();
         o.description = string.Format("Harvest\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.shortened = "Harvest";
-        o.setupStats(-monsterDmg, -natureDmg, 0, 0);
+
+        //Base Action
+        o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
+
+        //Powered Action
+        o.powerCons = o.defaultCons.clone();
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.75f };
@@ -82,9 +80,14 @@ public partial class Option
         Option o = new Option();
         o.description = string.Format("Savage Slash\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.shortened = "Savage Slash";
-        o.setupStats(-monsterDmg, -natureDmg, 0, 0);
 
-        o.rewards = new Option[] { treatWounds(), takeShelter() };
+        //Base Action
+        o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
+
+        //Powered Action
+        o.powerCons = o.defaultCons.clone(); 
+
+         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.5f };
 
         Conduit.connector[] topConnections = Conduit.newConnectors(-1, -1, (int)Conduit.powerColors.red);
@@ -102,7 +105,12 @@ public partial class Option
         Option o = new Option();
         o.description = string.Format("Clear a Path\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.shortened = "Clear a Path";
-        o.setupStats(-monsterDmg, -natureDmg, 0, 0);
+
+        //Base Action
+        o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
+
+        //Powered Action
+        o.powerCons = o.defaultCons.clone();
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.75f };
@@ -125,7 +133,12 @@ public partial class Option
         Option o = new Option();
         o.description = string.Format("Skilled Exploration\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.shortened = "Exploration";
-        o.setupStats(-monsterDmg, -natureDmg, 0, 0);
+
+        //Base Action
+        o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
+
+        //Powered Action
+        o.powerCons = o.defaultCons.clone();
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.75f };
@@ -145,7 +158,12 @@ public partial class Option
         Option o = new Option();
         o.description = string.Format("Reckless Assault\n\n{0} Damage to monsters\n Spend {1} extra stamina", monsterDmg, stamLoss);
         o.shortened = "Assault";
-        o.setupStats(-monsterDmg, 0, 0, -stamLoss);
+
+        //Base Action
+        o.defaultCons = new Consequence(0, -1-stamLoss, -monsterDmg, 0, null, o.description);
+
+        //Powered Action
+        o.powerCons = o.defaultCons.clone();
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.25f };
@@ -165,7 +183,12 @@ public partial class Option
         Option o = new Option();
         o.description = string.Format("Swift Kill\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.shortened = "Swift Kill";
-        o.setupStats(-monsterDmg, -natureDmg, 0, 0);
+
+        //Base Action
+        o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
+
+        //Powered Action
+        o.powerCons = o.defaultCons.clone();
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.5f };
@@ -185,7 +208,12 @@ public partial class Option
         Option o = new Option();
         o.description = string.Format("Lay of the Land\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.shortened = "Lay of the Land";
-        o.setupStats(-monsterDmg, -natureDmg, 0, 0);
+
+        //Base Action
+        o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
+
+        //Powered Action
+        o.powerCons = o.defaultCons.clone();
 
         o.rewards = new Option[] { treatWounds(), takeShelter(), investigateSurroundings() };
         o.rewardProbs = new float[] { 0.75f, 0.75f, .25f };
@@ -205,7 +233,12 @@ public partial class Option
         Option o = new Option();
         o.description = string.Format("Ranger Tactics\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
         o.shortened = "Ranger Tactics";
-        o.setupStats(-monsterDmg, -natureDmg, 0, 0);
+
+        //Base Action
+        o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
+
+        //Powered Action
+        o.powerCons = o.defaultCons.clone();
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.75f };
@@ -225,7 +258,12 @@ public partial class Option
         Option o = new Option();
         o.description = string.Format("Conquer the Wilderness\n\n{0} Damage to nature\n Spend {1} extra stamina", natureDmg, stamLoss);
         o.shortened = "Conquer";
-        o.setupStats(0, -natureDmg, 0, -stamLoss);
+
+        //Base Action
+        o.defaultCons = new Consequence(0, -1-stamLoss, 0, -natureDmg, null, o.description);
+
+        //Powered Action
+        o.powerCons = o.defaultCons.clone();
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.25f, 0.75f };
@@ -243,7 +281,10 @@ public partial class Option
 
         Option o = new Option();
         o.description = string.Format("Treat Wounds\n\nRecover {0} health", healthGain);
-        o.setupStats(0, 0, healthGain, 0);
+
+        //Base Action
+        o.defaultCons = new Consequence(healthGain, 0, 0, 0, null, o.description);
+
         return o;
     }
 
@@ -252,14 +293,18 @@ public partial class Option
 
         Option o = new Option();
         o.description = string.Format("Take Shelter\n\nRecover {0} stamina", stamGain);
-        o.setupStats(0, 0, 0, stamGain);
+
+        //Base Action
+        o.defaultCons = new Consequence(0, stamGain, 0, 0, null, o.description);
+
+
         return o;
     }
 
     public static Option investigateSurroundings() {
         Option o = new Option();
         o.description = string.Format("Investigate Surroundings");
-        o.setupStats(0, 0, 0, 0);
+        
         return o;
     }
 
@@ -270,7 +315,9 @@ public partial class Option
         Option o = new Option();
         o.description = string.Format("Climb Tree");
 
-        o.setupStats(0, 0, 0, stamGain);
+        //Base Action
+        o.defaultCons = new Consequence(0, stamGain, 0, 0, null, o.description);
+
         o.rarity = 1;
         return o;
     }
@@ -284,7 +331,9 @@ public partial class Option
 
         o.rewards = new Option[] { treatWounds(), takeShelter(), investigateSurroundings() };
         o.rewardProbs = new float[] { 0.75f, 0.75f, 1f };
-        o.setupStats(-monsterDmg, -natureDmg, 0, 0);
+
+        //Base Action
+        o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
         o.rarity = 1;
         return o;
     }
@@ -294,7 +343,9 @@ public partial class Option
 
         Option o = new Option();
         o.description = string.Format("Dual Strike. Deal {0} to both types.", dmg);
-        o.setupStats(-dmg, -dmg, 0, 0);
+
+        //Base Action
+        o.defaultCons = new Consequence(0, -1, -dmg, -dmg, null, o.description);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.5f };
