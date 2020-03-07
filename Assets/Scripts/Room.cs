@@ -10,6 +10,7 @@ public class Room : MonoBehaviour
     public List<Option> options;
     public Obstacle obstacle;
     public Relic relic = null;
+    public int distance;
 
 }
     

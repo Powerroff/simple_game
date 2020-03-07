@@ -23,14 +23,28 @@ public class Consequence
     }
 
     public void evaluate() {
+        if (specialAction != null) specialAction();
         GameManager.instance.player.updateStats(playerHpChange, playerStamChange);
         GameManager.instance.room.obstacle.assignDamage(monsterDmg, natureDmg);
-        if (specialAction != null) specialAction();
     }
 
     public Consequence clone() {
         return new Consequence(playerHpChange, playerStamChange, monsterDmg, natureDmg, specialAction, description);
     }
+
+    //Useful Special Actions
+
+    public void spendLessStamina(int stamSave) {
+        specialAction += () => {
+            if (playerStamChange < 0) playerStamChange = Math.Min(0, playerStamChange + stamSave);
+        };
+    }
+
+    public void dealMoreDamage(int monsterDmg, int natureDmg) {
+        this.monsterDmg -= monsterDmg;
+        this.natureDmg -= natureDmg;
+    }
+
 
 
 }

@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
     //UI Elements
     public Button nextRoomButton;
     public Image background;
-    public Text hpText, stamText, obsName, obsHp, obsDescription, relicName, relicDescription;
+    public Text hpText, stamText, obsName, obsHp, obsDescription, relicName, relicDescription, distanceText;
     public Canvas canvas;
     
     public OptionPanelManager opm = null;
@@ -122,6 +122,7 @@ public class UIManager : MonoBehaviour
     public void updateWithRoomInformation() {
         background.color = gm.room.backgroundColor;
 
+        distanceText.text = "Distance from base: " + gm.room.distance;
 
         //Set up obstacle
         obsName.text = gm.room.obstacle.name;

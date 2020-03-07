@@ -104,7 +104,6 @@ public class FlagManager
             if (match(currentlyEvaluating)) {
                 Debug.Log("Action " + flag.id);
                 modification(currentlyEvaluating);
-                Debug.Log(currentlyEvaluating.consequence.monsterDmg);
                 if (single_use) flag.toDelete = true;
             }
         };

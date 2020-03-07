@@ -63,7 +63,9 @@ public class GameManager : MonoBehaviour
 
     public void nextRoom() {
         //Process old room
+        int distance = 0;
         if (room) {
+            distance = room.distance;
             processObstacle();
 
             //Pickup relic
@@ -76,6 +78,9 @@ public class GameManager : MonoBehaviour
         Room tempRoom = gameObject.AddComponent<Room>() as Room;
         if(room) Destroy(room);
         room = tempRoom;
+
+        //Set distance
+        room.distance = distance + 1;
 
         //Increment roomCount
         roomCount++;

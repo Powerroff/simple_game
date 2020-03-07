@@ -33,7 +33,7 @@ public partial class Option
 
         //Powered Action
         o.powerCons = o.defaultCons.clone();
-        o.powerCons.specialAction += () => o.fm.modifyNextOptionIf(opt => !opt.isPowered(), opt => { opt.consequence.monsterDmg -= 2; opt.consequence.natureDmg -= 2; }, true);
+        o.powerCons.specialAction += () => o.fm.modifyNextOptionIf(opt => !opt.isPowered(), opt => opt.consequence.dealMoreDamage(bonusDmg, bonusDmg), true);
          
         //Rewards
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -51,6 +51,7 @@ public partial class Option
     public static Option harvest() {
         int monsterDmg = 1;
         int natureDmg = 2;
+        int staminaSave = 2;
 
         Option o = new Option();
         o.description = string.Format("Harvest\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
@@ -61,6 +62,7 @@ public partial class Option
 
         //Powered Action
         o.powerCons = o.defaultCons.clone();
+        o.powerCons.specialAction += () => o.fm.modifyNextOptionIf(opt => !opt.isPowered(), opt => { opt.consequence.spendLessStamina(staminaSave); }, true);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.75f };
