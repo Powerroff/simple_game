@@ -9,7 +9,7 @@ public partial class Obstacle
     // Prebuilt Options
     public static Obstacle underbrush() {
         Obstacle o = new Obstacle();
-        o.health = UnityEngine.Random.Range(4, 8);
+        o.maxHealth = UnityEngine.Random.Range(4, 8);
         o.obstacleClass = ObstacleClass.Nature;
         o.unCleared = () => GameManager.instance.player.updateStats(0, -o.health);
         o.description = string.Format("Natural.  \n If not cleared, deals remaining health as stamina damage.");
@@ -19,7 +19,7 @@ public partial class Obstacle
 
     public static Obstacle tree() {
         Obstacle o = new Obstacle();
-        o.health = UnityEngine.Random.Range(6, 12);
+        o.maxHealth = UnityEngine.Random.Range(6, 12);
         o.obstacleClass = ObstacleClass.Nature;
         o.unCleared = () => GameManager.instance.player.updateStats(0, -o.health);
         o.uniqueOption = Option.climbTree();
@@ -30,7 +30,7 @@ public partial class Obstacle
 
     public static Obstacle hound() {
         Obstacle o = new Obstacle();
-        o.health = UnityEngine.Random.Range(4, 10);
+        o.maxHealth = UnityEngine.Random.Range(4, 10);
         o.obstacleClass = ObstacleClass.Monster;
         o.unCleared = () => GameManager.instance.player.updateStats(-o.health, 0);
         o.description = string.Format("Monster.  \n If not cleared, deals remaining health as damage.");
@@ -40,7 +40,7 @@ public partial class Obstacle
 
     public static Obstacle monkey() {
         Obstacle o = new Obstacle();
-        o.health = UnityEngine.Random.Range(7, 13);
+        o.maxHealth = UnityEngine.Random.Range(7, 13);
         o.obstacleClass = ObstacleClass.Monster;
         o.unCleared = () => GameManager.instance.player.updateStats(-o.health, 0);
         o.description = string.Format("Monster.  \n If not cleared, deals remaining health as damage.");
@@ -54,11 +54,23 @@ public partial class Obstacle
 
     public static Obstacle boss1() {
         Obstacle o = new Obstacle();
-        o.health = UnityEngine.Random.Range(20, 25);
+        o.maxHealth = UnityEngine.Random.Range(25, 30);
         o.obstacleClass = ObstacleClass.Monster;
         o.unCleared = () => GameManager.instance.player.updateStats(-o.health, 0);
-        o.description = string.Format("Monster.  \n If not cleared, deals remaining health as damage.");
+        o.chases = true;
+        o.description = string.Format("Monster.  \n If not cleared, deals remaining health as damage, and chases you.");
         o.name = "Boss Monkey";
+        return o;
+    }
+
+    public static Obstacle boss2() {
+        Obstacle o = new Obstacle();
+        o.maxHealth = UnityEngine.Random.Range(45, 55);
+        o.obstacleClass = ObstacleClass.Monster;
+        o.unCleared = () => GameManager.instance.player.updateStats(-o.health, 0);
+        o.chases = true;
+        o.description = string.Format("Monster.  \n If not cleared, deals remaining health as damage, and chases you.");
+        o.name = "Cerberus";
         return o;
     }
 

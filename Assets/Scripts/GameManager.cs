@@ -65,14 +65,17 @@ public class GameManager : MonoBehaviour
         //Process old room
         int distance = 0;
         if (room) {
-            distance = room.distance;
-            processObstacle();
+            if (processObstacle()) {
+                repeatRoom(); //If obstacle chases you, repeat.
+                return;
+            }
 
             //Pickup relic
             if (room.relic != null) room.relic.onPickup.Invoke();
 
             //Process Flags
             fm.invoke(fm.onNewRoom);
+            distance = room.distance;
         }
 
         Room tempRoom = gameObject.AddComponent<Room>() as Room;
@@ -89,7 +92,8 @@ public class GameManager : MonoBehaviour
         //if (roomCount == 10) room.relic = Relic.tempRelicOne();
 
         //Generate Obstacle
-        if (roomCount == 20) room.obstacle = Obstacle.boss1();
+        if (roomCount == 5) room.obstacle = Obstacle.boss1();
+        else if (roomCount == 10) room.obstacle = Obstacle.boss2();
         else {
             Obstacle o = Obstacle.defaultPackage()[Random.Range(0, 4)];
             room.obstacle = o;
@@ -107,6 +111,17 @@ public class GameManager : MonoBehaviour
 
 
     }
+
+    public void repeatRoom() {
+        fm.invoke(fm.onNewRoom);
+        roomCount++; 
+        room.options = player.optionTree.getFirstLayer();
+        initOptionCons();
+        room.backgroundColor = Random.ColorHSV(0f, .5f, .5f, .5f, 0.5f, 1f);  // I've limited the background colors to the lighter half of the spectrum.
+        uim.nextRoom();
+    }
+
+
 
     public void takeAction() {
 
@@ -175,13 +190,16 @@ public class GameManager : MonoBehaviour
     }
 
 
-    void processObstacle() {
+    bool processObstacle() {
         if (room)
             if (room.obstacle.health > 0) {
                 room.obstacle.unCleared.Invoke();
+                return room.obstacle.chases;
             } else {
                 room.obstacle.cleared.Invoke();
+                return false;
             }
+        return false;
     }
 
     void initOptionCons() {

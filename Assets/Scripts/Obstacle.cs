@@ -15,19 +15,39 @@ public partial class Obstacle
     GameManager gm;
 
     //These variables will be specific to the obstacle
-    public int health;
+    int _health;
+    int _maxHealth;
+    public int maxHealth {
+        get {
+            return _maxHealth;
+        }
+        set {
+            _maxHealth = value;
+            _health = value;
+        }
+    }
+    public int health {
+        get {
+            return _health;
+        }
+        set {
+            _health = Math.Min(value, _maxHealth);
+        }
+    }
     public ObstacleClass obstacleClass;
     public Action unCleared, cleared;
     public string name, description;
     public Option uniqueOption;
+    public bool chases;
 
 
     //Constructor and methods
     public Obstacle() {
-        
+        chases = false;
         uniqueOption = null;
         unCleared = () => {; };
         cleared = () => {; };
+
     }
 
     /*
@@ -46,6 +66,10 @@ public partial class Obstacle
             health = Math.Max(health + monsterDmg, 0);
         if (obstacleClass == ObstacleClass.Nature)
             health = Math.Max(health + natureDmg, 0);
+    }
+
+    public float hpFraction() {
+        return (float)health / (float)maxHealth;
     }
 
 

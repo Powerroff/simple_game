@@ -33,7 +33,7 @@ public partial class Option
 
         //Powered Action
         o.powerCons = o.defaultCons.clone();
-        o.powerCons.specialAction += () => o.fm.modifyNextOptionIf(opt => !opt.isPowered(), opt => opt.consequence.dealMoreDamage(bonusDmg, bonusDmg), true);
+        o.powerCons.specialAction += () => o.fm.modifyNextOptionIf(opt => !opt.isPowered() && opt.consequence != null, opt => opt.consequence.dealMoreDamage(bonusDmg, bonusDmg), true);
          
         //Rewards
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -78,18 +78,21 @@ public partial class Option
     public static Option savageSlash() {
         int monsterDmg = 3;
         int natureDmg = 1;
+        int distanceChange = -1;
 
         Option o = new Option();
         o.description = string.Format("Savage Slash\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.descriptionPow = o.description + "\n Travel 1 distance less"; //Make string format
         o.shortened = "Savage Slash";
 
         //Base Action
         o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
 
         //Powered Action
-        o.powerCons = o.defaultCons.clone(); 
+        o.powerCons = o.defaultCons.clone();
+        o.powerCons.distanceChange = distanceChange;
 
-         o.rewards = new Option[] { treatWounds(), takeShelter() };
+        o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.5f };
 
         Conduit.connector[] topConnections = Conduit.newConnectors(-1, -1, (int)Conduit.powerColors.red);
@@ -131,9 +134,11 @@ public partial class Option
     public static Option skilledExploration() {
         int monsterDmg = 1;
         int natureDmg = 3;
+        int distanceChange = 1;
 
         Option o = new Option();
         o.description = string.Format("Skilled Exploration\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.descriptionPow = o.description + "\n Travel 1 distance more"; //Make string format
         o.shortened = "Exploration";
 
         //Base Action
@@ -141,6 +146,7 @@ public partial class Option
 
         //Powered Action
         o.powerCons = o.defaultCons.clone();
+        o.powerCons.distanceChange = distanceChange;
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.75f };
@@ -159,13 +165,14 @@ public partial class Option
 
         Option o = new Option();
         o.description = string.Format("Reckless Assault\n\n{0} Damage to monsters\n Spend {1} extra stamina", monsterDmg, stamLoss);
+        o.descriptionPow = string.Format("Reckless Assault\n\n{0} Damage to monsters\n Spend all power", 2 * monsterDmg);
         o.shortened = "Assault";
 
         //Base Action
         o.defaultCons = new Consequence(0, -1-stamLoss, -monsterDmg, 0, null, o.description);
 
         //Powered Action
-        o.powerCons = o.defaultCons.clone();
+        o.powerCons = new Consequence(0, -1, -2 * monsterDmg, 0, () => o.conduit.resetPower(), o.descriptionPow); 
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.25f };
@@ -184,6 +191,7 @@ public partial class Option
 
         Option o = new Option();
         o.description = string.Format("Swift Kill\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.description = string.Format("Swift Kill\n\n{0} Damage to monsters\n {1} damage to nature\nSpend all power to flee if obstacle is below half health", monsterDmg, natureDmg); //String format
         o.shortened = "Swift Kill";
 
         //Base Action
@@ -191,6 +199,8 @@ public partial class Option
 
         //Powered Action
         o.powerCons = o.defaultCons.clone();
+        o.powerCons.specialAction += () => o.conduit.resetPower();
+        o.powerCons.flee(.5f); //Ideally this happens after damage
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.5f };

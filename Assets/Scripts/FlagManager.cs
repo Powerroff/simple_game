@@ -90,7 +90,7 @@ public class FlagManager
         destroy.todo += () => destroyById(list, flag.id);
         destroy.todo += () => destroyById(onNewRoom, id);
 
-        onProcessOption.Add(flag);
+        list.Add(flag);
         onNewRoom.Add(destroy);
 
         return flag;
