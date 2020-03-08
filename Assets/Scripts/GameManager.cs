@@ -89,8 +89,11 @@ public class GameManager : MonoBehaviour
         //if (roomCount == 10) room.relic = Relic.tempRelicOne();
 
         //Generate Obstacle
-        Obstacle o = Obstacle.defaultPackage()[Random.Range(0, 4)];
-        room.obstacle = o;
+        if (roomCount == 20) room.obstacle = Obstacle.boss1();
+        else {
+            Obstacle o = Obstacle.defaultPackage()[Random.Range(0, 4)];
+            room.obstacle = o;
+        }
         
 
         //Generate Options

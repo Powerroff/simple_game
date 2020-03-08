@@ -81,11 +81,11 @@ public partial class Option
     }
 
     public void onPress() {
-        consequence.evaluate();
+        if (consequence != null) consequence.evaluate();
     }
     
     public void generateConsequence() {
-        consequence = isPowered() ? powerCons.clone() : defaultCons.clone(); // Yee ternary operator
+        consequence = powerCons != null && isPowered() ? powerCons.clone() : defaultCons.clone(); // Yee ternary operator
     }
 
      
