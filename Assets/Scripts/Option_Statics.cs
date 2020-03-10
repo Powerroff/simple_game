@@ -33,7 +33,7 @@ public partial class Option
 
         //Powered Action
         o.powerCons = o.defaultCons.clone();
-        o.powerCons.specialAction += () => o.fm.modifyNextOptionIf(opt => !opt.isPowered() && opt.consequence != null, opt => opt.consequence.dealMoreDamage(bonusDmg, bonusDmg), true);
+        o.powerCons.specialAction += () => o.fm.modifyNextOptionIf(opt => !opt.isPowered() && opt.consequence != null, opt => opt.consequence.dealMoreDamage(bonusDmg, bonusDmg), true, true);
          
         //Rewards
         o.rewards = new Option[] { treatWounds(), takeShelter() };
@@ -62,7 +62,7 @@ public partial class Option
 
         //Powered Action
         o.powerCons = o.defaultCons.clone();
-        o.powerCons.specialAction += () => o.fm.modifyNextOptionIf(opt => !opt.isPowered(), opt => { opt.consequence.spendLessStamina(staminaSave); }, true);
+        o.powerCons.specialAction += () => o.fm.modifyNextOptionIf(opt => !opt.isPowered() && opt.consequence != null, opt => { opt.consequence.spendLessStamina(staminaSave); }, true, true);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.75f };
@@ -106,16 +106,18 @@ public partial class Option
     public static Option clearPath() {
         int monsterDmg = 2;
         int natureDmg = 2;
+        int statsRestore = 3;
 
         Option o = new Option();
         o.description = string.Format("Clear a Path\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.descriptionPow = string.Format("Clear a Path\n\n{0} Damage to monsters\n {1} damage to nature. \nRestore {2} hp and stamina.", monsterDmg, natureDmg, statsRestore);
         o.shortened = "Clear a Path";
 
         //Base Action
         o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
 
         //Powered Action
-        o.powerCons = o.defaultCons.clone();
+        o.powerCons = new Consequence(statsRestore, statsRestore, -monsterDmg, -natureDmg, null, o.descriptionPow); ; // Would like this to make rewards better or something.
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.75f, 0.75f };
@@ -219,6 +221,7 @@ public partial class Option
 
         Option o = new Option();
         o.description = string.Format("Lay of the Land\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.descriptionPow = string.Format("Lay of the Land\n\n{0} Damage to monsters\n {1} damage to nature. \nSpend all power to change the next obstacle's type", monsterDmg, natureDmg);
         o.shortened = "Lay of the Land";
 
         //Base Action
@@ -226,6 +229,8 @@ public partial class Option
 
         //Powered Action
         o.powerCons = o.defaultCons.clone();
+        o.powerCons.specialAction += () => o.fm.modifyNextObstacleIf(obs => true, obs => o.gm.redoObstacle(), true); //Should not use this code for this purpose.
+        o.powerCons.specialAction += () => o.conduit.resetPower();
 
         o.rewards = new Option[] { treatWounds(), takeShelter(), investigateSurroundings() };
         o.rewardProbs = new float[] { 0.75f, 0.75f, .25f };
@@ -244,13 +249,14 @@ public partial class Option
 
         Option o = new Option();
         o.description = string.Format("Ranger Tactics\n\n{0} Damage to monsters\n {1} damage to nature", monsterDmg, natureDmg);
+        o.descriptionPow = string.Format("Ranger Tactics\n\n{0} Damage to monsters\n {1} damage to nature\nAdds nature damage to monster damage.", monsterDmg, natureDmg);
         o.shortened = "Ranger Tactics";
 
         //Base Action
         o.defaultCons = new Consequence(0, -1, -monsterDmg, -natureDmg, null, o.description);
 
         //Powered Action
-        o.powerCons = o.defaultCons.clone();
+        o.powerCons = new Consequence(0, -1, -monsterDmg-natureDmg, -natureDmg, null, o.description);
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.5f, 0.75f };
@@ -269,13 +275,16 @@ public partial class Option
 
         Option o = new Option();
         o.description = string.Format("Conquer the Wilderness\n\n{0} Damage to nature\n Spend {1} extra stamina", natureDmg, stamLoss);
+        o.descriptionPow = string.Format("Conquer the Wilderness\n\n{0} Damage to nature\n Deals {0} damage to next natural obstacle encountered.", natureDmg);
         o.shortened = "Conquer";
 
         //Base Action
         o.defaultCons = new Consequence(0, -1-stamLoss, 0, -natureDmg, null, o.description);
 
         //Powered Action
-        o.powerCons = o.defaultCons.clone();
+        o.powerCons = new Consequence(0, -1, 0, -natureDmg, null, o.description);
+        o.powerCons.specialAction += () => o.fm.modifyNextObstacleIf(obs => obs.obstacleClass == Obstacle.ObstacleClass.Nature, obs => obs.assignDamage(0, -natureDmg), true);
+        o.powerCons.specialAction += () => o.conduit.resetPower();
 
         o.rewards = new Option[] { treatWounds(), takeShelter() };
         o.rewardProbs = new float[] { 0.25f, 0.75f };

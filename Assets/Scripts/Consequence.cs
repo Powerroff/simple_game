@@ -45,7 +45,6 @@ public class Consequence
         gm.player.updateStats(playerHpChange, playerStamChange);
         gm.room.obstacle.assignDamage(monsterDmg, natureDmg);
         gm.room.distance += distanceChange;
-        Debug.Log(distanceChange);
     }
 
     public Consequence clone() {

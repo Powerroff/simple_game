@@ -7,6 +7,7 @@ using System;
 public class FlagManager
 {
     //Want to make these event actions but w/e 
+    public List<Flag> afterNewRoom;
     public List<Flag> onGenerateOption;
     public List<Flag> onProcessOption;
     public List<Flag> onNewRoom;
@@ -48,6 +49,7 @@ public class FlagManager
         onGenerateOption = new List<Flag>();
         onProcessOption = new List<Flag>();
         onNewRoom = new List<Flag>();
+        afterNewRoom = new List<Flag>();
     }
 
     public void invoke(List<Flag> list) {
@@ -83,6 +85,7 @@ public class FlagManager
     }
 
     //Creates a flag to last for one room, also giving access to destruction flag
+    //TODO special flag when list = onNewRoom
     public Flag oneRoomFlag(List<Flag> list, out Flag destroy) {
         Flag flag = new Flag();
         destroy = new Flag();
@@ -97,9 +100,13 @@ public class FlagManager
     }
 
     //Maybe would rather have modification action work on the consequence rather than the option?
-    public Flag modifyNextOptionIf(Predicate<Option> match, Action<Option> modification, bool single_use) {
-        Flag flag = oneRoomFlag(onProcessOption);
-        Debug.Log("Made Modification Flag " + flag.id);
+    public Flag modifyNextOptionIf(Predicate<Option> match, Action<Option> modification, bool single_use, bool single_room) {
+        if (!single_room && !single_use) Debug.Log("CAUTION: Perpetual Flag created.");
+        Flag flag;
+        if (single_room) flag = oneRoomFlag(onProcessOption);
+        else flag = new Flag();
+
+        //Debug.Log("Made Modification Flag " + flag.id);
         flag.todo += () => {
             if (match(currentlyEvaluating)) {
                 Debug.Log("Action " + flag.id);
@@ -110,6 +117,21 @@ public class FlagManager
         return flag;
     }
 
+    public Flag modifyNextObstacleIf(Predicate<Obstacle> match, Action<Obstacle> modification, bool single_use) {
+        if (!single_use) Debug.Log("CAUTION: Perpetual Flag created.");
 
+        //Debug.Log("Made Modification Flag " + flag.id);
+        Flag flag = new Flag();
+        flag.todo += () => {
+            if (match(GameManager.instance.room.obstacle)) {                
+                modification(GameManager.instance.room.obstacle);
+                if (single_use) flag.toDelete = true;
+            }
+        };
+
+        afterNewRoom.Add(flag);
+
+        return flag;
+    }
 
 }

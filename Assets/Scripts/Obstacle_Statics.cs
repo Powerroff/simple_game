@@ -52,6 +52,17 @@ public partial class Obstacle
         return new Obstacle[] { underbrush(), tree(), hound(), monkey() };
     }
 
+    public static Obstacle[] allOfClass(ObstacleClass obsClass) {
+        switch (obsClass) {
+            case ObstacleClass.Nature:
+                return new Obstacle[] { underbrush(), tree() };
+            case ObstacleClass.Monster:
+                return new Obstacle[] { hound(), monkey() };
+            default:
+                return defaultPackage();
+        }
+    }
+
     public static Obstacle boss1() {
         Obstacle o = new Obstacle();
         o.maxHealth = UnityEngine.Random.Range(25, 30);

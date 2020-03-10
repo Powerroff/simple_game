@@ -92,8 +92,8 @@ public class GameManager : MonoBehaviour
         //if (roomCount == 10) room.relic = Relic.tempRelicOne();
 
         //Generate Obstacle
-        if (roomCount == 5) room.obstacle = Obstacle.boss1();
-        else if (roomCount == 10) room.obstacle = Obstacle.boss2();
+        if (roomCount == 10) room.obstacle = Obstacle.boss1();
+        else if (roomCount == 20) room.obstacle = Obstacle.boss2();
         else {
             Obstacle o = Obstacle.defaultPackage()[Random.Range(0, 4)];
             room.obstacle = o;
@@ -107,7 +107,10 @@ public class GameManager : MonoBehaviour
         //Generate Background Color
         room.backgroundColor = Random.ColorHSV(0f, .5f, .5f, .5f, 0.5f, 1f);  // I've limited the background colors to the lighter half of the spectrum.
 
+        fm.invoke(fm.afterNewRoom);
+
         uim.nextRoom();
+        Debug.Log("Room Count " + roomCount);
 
 
     }
@@ -208,6 +211,14 @@ public class GameManager : MonoBehaviour
             fm.currentlyGenerating = option;
             fm.invoke(fm.onGenerateOption);
         }
+    }
+
+    //this could be refactored to be more general
+    public void redoObstacle() {
+        if (room.obstacle.obstacleClass == Obstacle.ObstacleClass.Nature)
+            room.obstacle = Obstacle.allOfClass(Obstacle.ObstacleClass.Monster)[Random.Range(0, 2)];
+        else
+            room.obstacle = Obstacle.allOfClass(Obstacle.ObstacleClass.Nature)[Random.Range(0, 2)];
     }
 
 
