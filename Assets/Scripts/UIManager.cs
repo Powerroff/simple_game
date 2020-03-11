@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
     //UI Elements
     public Button nextRoomButton;
     public Image background;
-    public Text hpText, stamText, obsName, obsHp, obsDescription, relicName, relicDescription, distanceText;
+    public Text hpText, stamText, obsName, obsHp, obsDescription, relicName, relicDescription, distanceText, bossDistanceText;
     public Canvas canvas;
     
     public OptionPanelManager opm = null;
@@ -91,7 +91,6 @@ public class UIManager : MonoBehaviour
 
     public void nextRoom() {
 
-
         //Destroy old option panel
         if (oldConsequencePanel != null)
             Destroy(oldConsequencePanel.gameObject);
@@ -123,6 +122,8 @@ public class UIManager : MonoBehaviour
         background.color = gm.room.backgroundColor;
 
         distanceText.text = "Distance from base: " + gm.room.distance;
+
+        bossDistanceText.text = "A large monster is at distance " + gm.bossDistance + " from the party.";
 
         //Set up obstacle
         obsName.text = gm.room.obstacle.name;

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -39,13 +41,18 @@ public class GameManager : MonoBehaviour
     public FlagManager fm { get; set; }
     public Player player { get; set; }
     public int roomCount { get; set; }
+    public int bossDistance { get; set; }
     public bool[] optionsSelected { get; set; }
     public string consequences { get; set; }
+
+    public GameObject endTextPrefab; //Refactor this
+    public bool didBoss1; //Redo this
 
     // Start is called before the first frame update
     void Start()
     {
         roomCount = 0;
+        bossDistance = 16;
 
         uim = GameObject.Find("UIManager").GetComponent<UIManager>();
         player = GameObject.Find("Player").GetComponent<Player>();
@@ -62,6 +69,17 @@ public class GameManager : MonoBehaviour
     }
 
     public void nextRoom() {
+
+        if (player.stats.stamina <= 0 || player.stats.hp <= 0) {
+            onGameEnd(false);
+            return;
+        }
+
+        if (roomCount > 50 || room.distance > 50) {
+            onGameEnd(true);
+            return;
+        }
+
         //Process old room
         int distance = 0;
         if (room) {
@@ -84,6 +102,7 @@ public class GameManager : MonoBehaviour
 
         //Set distance
         room.distance = distance + 1;
+        bossDistance -= 1;
 
         //Increment roomCount
         roomCount++;
@@ -92,8 +111,10 @@ public class GameManager : MonoBehaviour
         //if (roomCount == 10) room.relic = Relic.tempRelicOne();
 
         //Generate Obstacle
-        if (roomCount == 10) room.obstacle = Obstacle.boss1();
-        else if (roomCount == 20) room.obstacle = Obstacle.boss2();
+        if (bossDistance == 0 && !didBoss1) {
+            room.obstacle = Obstacle.boss1();
+            bossDistance = 16;
+        } else if (bossDistance == 0 && didBoss1) room.obstacle = Obstacle.boss2();
         else {
             Obstacle o = Obstacle.defaultPackage()[Random.Range(0, 4)];
             room.obstacle = o;
@@ -221,6 +242,16 @@ public class GameManager : MonoBehaviour
             room.obstacle = Obstacle.allOfClass(Obstacle.ObstacleClass.Nature)[Random.Range(0, 2)];
     }
 
+
+    //Refactor this
+    public void onGameEnd(bool victory) {
+        //Destroy(uim.gameObject);
+        //SceneManager.LoadScene("GameEndScene");
+        Text vText = Instantiate(endTextPrefab, uim.canvas.transform).GetComponent<Text>();
+        if (victory) vText.text = "Victory";
+        else vText.text = "Defeat";
+        Debug.Log(vText.text);
+    }
 
 
 }

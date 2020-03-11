@@ -5,7 +5,7 @@ using UnityEngine;
 public class Conduit
 {
     int _reinforcement = 0;
-    public int max_reinforcement = 2; //Eventually make this a property of the option?
+    public int max_reinforcement = 5; //Eventually make this a property of the option?
     public int reinforcement {
         get {
             return _reinforcement;

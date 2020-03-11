@@ -79,6 +79,7 @@ public partial class Obstacle
         o.maxHealth = UnityEngine.Random.Range(45, 55);
         o.obstacleClass = ObstacleClass.Monster;
         o.unCleared = () => GameManager.instance.player.updateStats(-o.health, 0);
+        o.cleared = () => GameManager.instance.onGameEnd(true);
         o.chases = true;
         o.description = string.Format("Monster.  \n If not cleared, deals remaining health as damage, and chases you.");
         o.name = "Cerberus";
