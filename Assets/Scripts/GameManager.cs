@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     public FlagManager fm { get; set; }
     public Player player { get; set; }
     public int roomCount { get; set; }
-    public int bossDistance { get; set; }
+    int bossRoom;
     public bool[] optionsSelected { get; set; }
     public string consequences { get; set; }
 
@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         roomCount = 0;
-        bossDistance = 16;
+        bossRoom = -15;
 
         uim = GameObject.Find("UIManager").GetComponent<UIManager>();
         player = GameObject.Find("Player").GetComponent<Player>();
@@ -75,14 +75,14 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (roomCount > 50 || room.distance > 50) {
-            onGameEnd(true);
-            return;
-        }
-
         //Process old room
         int distance = 0;
         if (room) {
+            if (roomCount > 50 || room.distance > 50) {
+                onGameEnd(true);
+                return;
+            }
+
             if (processObstacle()) {
                 repeatRoom(); //If obstacle chases you, repeat.
                 return;
@@ -102,7 +102,7 @@ public class GameManager : MonoBehaviour
 
         //Set distance
         room.distance = distance + 1;
-        bossDistance -= 1;
+        bossRoom += 1 + (roomCount % 2);
 
         //Increment roomCount
         roomCount++;
@@ -111,10 +111,10 @@ public class GameManager : MonoBehaviour
         //if (roomCount == 10) room.relic = Relic.tempRelicOne();
 
         //Generate Obstacle
-        if (bossDistance == 0 && !didBoss1) {
+        if (bossDistance() == 0 && !didBoss1) {
             room.obstacle = Obstacle.boss1();
-            bossDistance = 16;
-        } else if (bossDistance == 0 && didBoss1) room.obstacle = Obstacle.boss2();
+            bossRoom = -15;
+        } else if (bossDistance() == 0 && didBoss1) room.obstacle = Obstacle.boss2();
         else {
             Obstacle o = Obstacle.defaultPackage()[Random.Range(0, 4)];
             room.obstacle = o;
@@ -134,6 +134,10 @@ public class GameManager : MonoBehaviour
         Debug.Log("Room Count " + roomCount);
 
 
+    }
+
+    public int bossDistance() {
+        return System.Math.Max(room.distance - bossRoom, 0);
     }
 
     public void repeatRoom() {

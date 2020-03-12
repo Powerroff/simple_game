@@ -123,7 +123,7 @@ public class UIManager : MonoBehaviour
 
         distanceText.text = "Distance from base: " + gm.room.distance;
 
-        bossDistanceText.text = "A large monster is at distance " + gm.bossDistance + " from the party.";
+        bossDistanceText.text = "A large monster is at distance " + gm.bossDistance() + " from the party.";
 
         //Set up obstacle
         obsName.text = gm.room.obstacle.name;
