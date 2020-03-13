@@ -20,19 +20,20 @@ public class OptionPanelManager : MonoBehaviour
     float height;
     public GameObject buttonPrefab;
 
-    struct OptionWrapper
+    class OptionWrapper
     {
-        Text text;
+        
         Button button;
         Image indicator;
+        OptButtonHandler handler;
 
-        public OptionWrapper(Button button, Text text,  Image indicator) {
-            this.text = text;
+        public OptionWrapper(Button button) {
             this.button = button;
-            this.indicator = indicator;
+            this.handler = button.GetComponent<OptButtonHandler>();
+            this.indicator = button.transform.Find("OptionIndicator").GetComponent<Image>();
         }
-        public void setText(string newText) {
-            text.text = newText;
+        public void setText(Option option) {
+            handler.setup(option);
         }
         public void setState(bool state) {
             if (button.interactable) //Maybe make this check somewhere else
@@ -85,12 +86,12 @@ public class OptionPanelManager : MonoBehaviour
             rt.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 0, height);
 
             g.GetComponent<Button>().onClick.AddListener(generateListener(i));
-            optionButtons[i] = new OptionWrapper(g.GetComponent<Button>(), g.GetComponentInChildren<Text>(), g.transform.Find("OptionIndicator").GetComponent<Image>());
+            optionButtons[i] = new OptionWrapper(g.GetComponent<Button>());
 
             optionButtons[i].setState(false);
-            string reinfStr = "";
-            if(options[i].conduit != null) reinfStr = "\n\n Reinforcement " + options[i].conduit.reinforcement;
-            optionButtons[i].setText(options[i].getDescription() + reinfStr);
+            //string reinfStr = "";
+            //if(options[i].conduit != null) reinfStr = "\n\n Reinforcement " + options[i].conduit.reinforcement;
+            optionButtons[i].setText(options[i]);
             optionButtons[i].setColor(options[i].rarity);
 
             optionsSelected[i] = false;
