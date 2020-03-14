@@ -85,6 +85,10 @@ public class Conduit
 
     }
 
+    public virtual int getPowerColor() {
+        return 0; //refactor this
+    }
+
     public virtual bool isReceivingPower() {
         processInputs();
         foreach (bool b in activePowers)
@@ -140,6 +144,11 @@ public class Conduit
         public override void resetPower() {
             return; //Cannot be unpowered once powered!
         }
+
+        public override int getPowerColor() {
+            return color;
+        }
+
     }
 
 

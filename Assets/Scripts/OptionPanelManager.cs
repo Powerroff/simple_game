@@ -26,14 +26,21 @@ public class OptionPanelManager : MonoBehaviour
         Button button;
         Image indicator;
         OptButtonHandler handler;
+        generatorObjHandler gen;
 
         public OptionWrapper(Button button) {
             this.button = button;
             this.handler = button.GetComponent<OptButtonHandler>();
             this.indicator = button.transform.Find("OptionIndicator").GetComponent<Image>();
+            this.gen = button.GetComponentInChildren<generatorObjHandler>();
         }
-        public void setText(Option option) {
+        public void setupOption(Option option) {
             handler.setup(option);
+            if (option.conduit != null)
+                gen.setImage(option.conduit.getPowerColor(), option.conduit.reinforcement);
+            else
+                gen.setImage(-1, 0);
+            setColor(option.rarity);
         }
         public void setState(bool state) {
             if (button.interactable) //Maybe make this check somewhere else
@@ -91,8 +98,7 @@ public class OptionPanelManager : MonoBehaviour
             optionButtons[i].setState(false);
             //string reinfStr = "";
             //if(options[i].conduit != null) reinfStr = "\n\n Reinforcement " + options[i].conduit.reinforcement;
-            optionButtons[i].setText(options[i]);
-            optionButtons[i].setColor(options[i].rarity);
+            optionButtons[i].setupOption(options[i]);
 
             optionsSelected[i] = false;
         }

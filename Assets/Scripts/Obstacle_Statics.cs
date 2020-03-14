@@ -22,7 +22,7 @@ public partial class Obstacle
         o.maxHealth = UnityEngine.Random.Range(6, 12);
         o.obstacleClass = ObstacleClass.Nature;
         o.unCleared = () => GameManager.instance.player.updateStats(0, -o.health);
-        o.uniqueOption = Option.climbTree();
+        //o.uniqueOption = Option.climbTree();                                       //Debug this at some point
         o.description = string.Format("Natural.  \n If not cleared, deals remaining health as stamina damage.");
         o.name = "Tree";
         return o;
