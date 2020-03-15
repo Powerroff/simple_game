@@ -5,7 +5,7 @@ using UnityEngine;
 public class Conduit
 {
     int _reinforcement = 0;
-    public int max_reinforcement = 5; //Eventually make this a property of the option?
+    public int max_reinforcement = 4; //Eventually make this a property of the option?
     public int reinforcement {
         get {
             return _reinforcement;
@@ -86,7 +86,15 @@ public class Conduit
     }
 
     public virtual int getPowerColor() {
-        return 0; //refactor this
+        if (activePowers[0]) return 0;
+        else return 1; //refactor this
+    }
+
+    public virtual int getPowerState() {
+        if (activePowers[0]) return 4;
+        if (activePowers[1]) return 2;
+        if (activePowers[2]) return 6;
+        return 0;
     }
 
     public virtual bool isReceivingPower() {
@@ -149,6 +157,12 @@ public class Conduit
             return color;
         }
 
+        public override int getPowerState() {
+            if (color == 0) return 4;
+            if (color == 1) return 2;
+            return 0;
+        }
+
     }
 
 
@@ -185,6 +199,17 @@ public class Conduit
                     return false;
                 }
             return true;
+        }
+
+        public override int getPowerColor() {
+            return color;
+        }
+
+        public override int getPowerState() { //refactor eventually, this only works for the one specific default generator
+            if (activePowers[0] && activePowers[1]) return 5;
+            if (activePowers[0]) return 3;
+            if (activePowers[1]) return 1;
+            return 0;
         }
     }
 

@@ -302,7 +302,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 70cca52b1c52ff143bc699e5d1b230b9, type: 3}
+  m_Sprite: {fileID: 824927792450193709, guid: 70cca52b1c52ff143bc699e5d1b230b9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -382,6 +382,14 @@ MonoBehaviour:
   body: {fileID: 2579613244200126871}
   monsterDmg: {fileID: 883817308426075577}
   natureDmg: {fileID: 883817307920349432}
+  powerSprites:
+  - {fileID: 824927792450193709, guid: 70cca52b1c52ff143bc699e5d1b230b9, type: 3}
+  - {fileID: -9152916681505443795, guid: 70cca52b1c52ff143bc699e5d1b230b9, type: 3}
+  - {fileID: -3942732469404801448, guid: 70cca52b1c52ff143bc699e5d1b230b9, type: 3}
+  - {fileID: -4842340325089380229, guid: 70cca52b1c52ff143bc699e5d1b230b9, type: 3}
+  - {fileID: 6425961034476489658, guid: 70cca52b1c52ff143bc699e5d1b230b9, type: 3}
+  - {fileID: 3204561656210531945, guid: 70cca52b1c52ff143bc699e5d1b230b9, type: 3}
+  - {fileID: -6467624060796414359, guid: 70cca52b1c52ff143bc699e5d1b230b9, type: 3}
 --- !u!1 &3813414848253527569
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,7 +615,7 @@ PrefabInstance:
     - target: {fileID: 6530530874835176194, guid: 910b3cb277aaf79408bb73248ae97517,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6530530874835176194, guid: 910b3cb277aaf79408bb73248ae97517,
         type: 3}

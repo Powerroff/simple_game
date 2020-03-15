@@ -113,7 +113,7 @@ public class GameManager : MonoBehaviour
         //Generate Obstacle
         if (bossDistance() == 0 && !didBoss1) {
             room.obstacle = Obstacle.boss1();
-            bossRoom = -15;
+            bossRoom = roomCount-15;
         } else if (bossDistance() == 0 && didBoss1) room.obstacle = Obstacle.boss2();
         else {
             Obstacle o = Obstacle.defaultPackage()[Random.Range(0, 4)];
